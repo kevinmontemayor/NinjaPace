@@ -36,6 +36,7 @@ https://github.com/user-attachments/assets/aed2fffb-65a8-404d-ad67-c7ae8cae480e
 
 
 https://github.com/user-attachments/assets/901527f0-3493-4733-a757-e4598d606bb5
+
 ---
 
 Watch App - 
@@ -44,6 +45,7 @@ Watch App -
 <img width="410" height="502" alt="NinjaPace - WatchApp" src="https://github.com/user-attachments/assets/f48aaf3a-e4d7-4981-a178-b01902e21411" />
 
 <img width="410" height="502" alt="NinjaPace - WatchApp - Pause" src="https://github.com/user-attachments/assets/d3ded036-a26f-4d0b-a3eb-4326c0a2bfd4" />
+
 ---
 
 Mac App - 
