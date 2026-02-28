@@ -6,10 +6,12 @@
 ---
 
 Browser HUD - 
-<img width="347" height="281" alt="NinjaPace - HUD - Live" src="https://github.com/user-attachments/assets/423aac91-3b96-4862-99dd-5c560cf39fae" />
+---
+<img width="347" height="283" alt="NinjaPace - HUD - Live" src="https://github.com/user-attachments/assets/998c2b6b-0c52-4a90-a66e-f132709966d9" />
+---
 <img width="348" height="281" alt="NinjaPace - HUD - Paused" src="https://github.com/user-attachments/assets/3d0bd156-87da-4bea-8bf1-5b1a68e468e5" />
+---
 <img width="353" height="287" alt="NinjaPace - HUD - Goal Completed" src="https://github.com/user-attachments/assets/a40d9047-e729-4adb-9555-ddc975b3bd00" />
-
 ---
 
 
