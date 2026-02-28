@@ -1,36 +1,32 @@
 //
-//  NinjaPaceApp.swift
-//  NinjaPace
+//  NinjaPaceMacApp.swift
+//  NinjaPaceMac
 //
-//  Created by Kevin Montemayor on 2/4/26.
+//  Created by Kevin Montemayor on 2/12/26.
 //
 
 import SwiftUI
 import SwiftData
 
 @main
-struct NinjaPaceApp: App {
-    
-    @StateObject private var themeStore = ThemeStore()
-    
+struct NinjaPaceMacApp: App {
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
             Item.self,
         ])
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
-        
+
         do {
             return try ModelContainer(for: schema, configurations: [modelConfiguration])
         } catch {
             fatalError("Could not create ModelContainer: \(error)")
         }
     }()
-    
+
     var body: some Scene {
         WindowGroup {
-            RootView()
-                .environmentObject(themeStore)
-                .tint(themeStore.theme.tint)
+            ContentView()
         }
+        .modelContainer(sharedModelContainer)
     }
 }
