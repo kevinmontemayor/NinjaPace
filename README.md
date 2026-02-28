@@ -5,6 +5,45 @@
 
 ---
 
+
+https://github.com/user-attachments/assets/f86067ff-8f94-43e5-87e1-3e3e16b81827
+
+
+https://github.com/user-attachments/assets/7a61ed45-9b10-4f9c-91c1-a8cf501324b0
+
+
+
+
+https://github.com/user-attachments/assets/317c337d-5037-43c6-b14f-a098d277212c
+
+
+
+https://github.com/user-attachments/assets/d3843340-4540-4abe-bb00-1373df36487c
+
+
+
+
+https://github.com/user-attachments/assets/aed2fffb-65a8-404d-ad67-c7ae8cae480e
+
+
+
+https://github.com/user-attachments/assets/901527f0-3493-4733-a757-e4598d606bb5
+
+---
+
+Watch App - 
+
+<img width="410" height="502" alt="NinjaPace - WatchApp" src="https://github.com/user-attachments/assets/f48aaf3a-e4d7-4981-a178-b01902e21411" />
+
+<img width="410" height="502" alt="NinjaPace - WatchApp - Pause" src="https://github.com/user-attachments/assets/d3ded036-a26f-4d0b-a3eb-4326c0a2bfd4" />
+
+---
+
+Mac App - 
+<img width="899" height="448" alt="NinjaPaceMac app" src="https://github.com/user-attachments/assets/70d2cfe1-c077-4c26-8ad9-bb3a83960b0c" />
+
+---
+
 # 1. Purpose
 
 The NinjaPace OBS HUD Overlay is a web UI (HTML/CSS/JS) designed to run inside an **OBS Browser Source**.
