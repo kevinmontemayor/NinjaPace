@@ -5,6 +5,13 @@
 
 ---
 
+Browser HUD - 
+<img width="347" height="281" alt="NinjaPace - HUD - Live" src="https://github.com/user-attachments/assets/423aac91-3b96-4862-99dd-5c560cf39fae" />
+<img width="348" height="281" alt="NinjaPace - HUD - Paused" src="https://github.com/user-attachments/assets/3d0bd156-87da-4bea-8bf1-5b1a68e468e5" />
+<img width="353" height="287" alt="NinjaPace - HUD - Goal Completed" src="https://github.com/user-attachments/assets/a40d9047-e729-4adb-9555-ddc975b3bd00" />
+
+---
+
 
 https://github.com/user-attachments/assets/f86067ff-8f94-43e5-87e1-3e3e16b81827
 
@@ -40,6 +47,7 @@ Watch App -
 ---
 
 Mac App - 
+
 <img width="899" height="448" alt="NinjaPaceMac app" src="https://github.com/user-attachments/assets/70d2cfe1-c077-4c26-8ad9-bb3a83960b0c" />
 
 ---
