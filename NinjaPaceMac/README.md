@@ -1,282 +1,467 @@
-# 🥷 NinjaPace – Mac Relay App
+# 🥷 NinjaPace – Mac Companion
 
-> The streaming bridge.
-> Real-time telemetry relay for OBS overlays.
+> **The streaming bridge.**  
+> A local telemetry relay and customizable browser HUD for OBS and other streaming software.
 
----
-
-# 1. Overview
-
-The NinjaPace Mac Relay App is a lightweight local HTTP server that:
-
-- Receives telemetry from iPhone
-- Stores the latest workout state
-- Serves JSON to OBS browser sources
-- Enables real-time streaming overlays
-
-It acts as a stateless relay between:
-
-iPhone → Mac → OBS → Stream
-
-No cloud. No accounts. Pure local network performance.
+[Ecosystem overview](../README.md) · [Streaming HUD](../docs/README-Streaming-HUD.md) · [Screenshot checklist](../docs/SCREENSHOTS.md)
 
 ---
 
-# 2. Core Responsibilities
+## 1. Overview
 
-## Ingest Telemetry
-- Receive HTTP POST requests from iPhone
-- Validate JSON payload
-- Store latest stats in memory
+The NinjaPace Mac app is the optional streaming companion for the NinjaPace ecosystem.
 
-## Serve Stats to OBS
-- Provide `/stats` endpoint
-- Return latest workout JSON
-- Enable polling from browser source
+It receives live workout telemetry from the iPhone, maintains the latest workout state, serves a browser-based HUD, and exposes live JSON for streaming integrations.
 
-## Local Network Server
-- Bind to port (default: 8787)
-- Serve on LAN IP
-- Allow CORS access
+```text
+Apple Watch
+    ↓
+iPhone
+StatsPushClient
+    │
+    │ HTTP POST /ingest
+    ▼
+NinjaPace Mac
+MacRelayServer
+    │
+    ├── GET /stats
+    └── GET /
+            │
+            ▼
+        Browser HUD
+            │
+            ▼
+           OBS
+```
+
+There is no cloud relay in the normal path.
+
+Streaming data remains local to the user's network.
 
 ---
 
-# 3. Architecture Overview
+## 2. Core Responsibilities
 
-iPhone StatsPushClient  
-↓ HTTP POST  
-Mac Relay Server (`/ingest`)  
-↓ In-memory store  
-GET `/stats`  
-↓  
-OBS Browser Source  
-↓  
-Stream Overlay
+### 📥 Receive Telemetry
+
+The Mac accepts live telemetry from the iPhone and keeps the newest workout snapshot in memory.
+
+### 📤 Serve Telemetry
+
+The relay exposes the current state through HTTP for the browser HUD and compatible local tools.
+
+### 🖥️ Host the Browser HUD
+
+The Mac serves the NinjaPace HUD directly for OBS Browser Sources.
+
+### ⏱️ Smooth Elapsed Time
+
+The Mac locally interpolates elapsed time between iPhone telemetry packets so the stopwatch remains visually smooth.
+
+### 🎨 HUD Configuration
+
+The Mac can:
+
+- Follow the HUD configuration from iPhone
+- Use a local Mac override
+- Preview live HUD changes
+- Persist local customization
+
+[![Mac relay OFFLINE](../docs/images/previews/mac-relay-offline.png)](../docs/images/mac/mac-relay-offline.png) [![Mac relay ONLINE with demo workout telemetry](../docs/images/previews/mac-relay-live.png)](../docs/images/mac/mac-relay-live.png)
 
 ---
 
-# 4. HTTP Endpoints
+## 3. MacRelayServer
 
-## POST /ingest
+`MacRelayServer` is the central Mac runtime component.
 
-Receives telemetry payload.
+Responsibilities include:
 
-### Example Payload
+- Start and stop the local listener
+- Search for an available relay port
+- Accept telemetry payloads
+- Decode and store the latest stats
+- Track the latest receive time
+- Serve `/stats`
+- Serve the browser HUD
+- Preserve the last known theme
+- Preserve HUD configuration mode
+- Interpolate elapsed time locally
+- Surface relay errors to the Mac UI
 
-```json
-{
-  "running": true,
-  "paused": false,
-  "miles": 3.12,
-  "steps": 4821,
-  "hr": 152,
-  "elapsed": "00:27:43",
-  "elapsedSeconds": 1663,
-  "activeCalories": 412.3,
-  "totalCalories": 520.0,
-  "goalMiles": 6.21,
-  "progress": 0.50,
-  "pace": "8:55"
-}
+---
 
-Response
-200 OK
-GET /stats
+## 4. HTTP Endpoints
 
-Returns latest stored telemetry.
+Primary endpoints:
 
-Example Response
-{
-  "running": true,
-  "paused": false,
-  "miles": 3.12,
-  "steps": 4821,
-  "hr": 152,
-  "elapsed": "00:27:43",
-  "elapsedSeconds": 1663,
-  "activeCalories": 412.3,
-  "totalCalories": 520.0,
-  "goalMiles": 6.21,
-  "progress": 0.50,
-  "pace": "8:55"
-}
-5. Core Components
-WebServerManager
+```text
+POST /ingest
+GET  /stats
+GET  /
+```
 
-Responsibilities
+### `POST /ingest`
 
-Start/Stop HTTP server
-
-Bind to selected port
-
-Expose serverURLString
-
-Log status
-
-TelemetryStore
-
-Responsibilities
-
-Hold latest stats in memory
-
-Thread-safe updates
-
-Provide snapshot for /stats
+Receives the latest workout state from iPhone.
 
 Example:
 
-final class TelemetryStore {
-    private let queue = DispatchQueue(label: "telemetry.store")
-
-    private var current: Payload = .idle
-
-    func update(_ payload: Payload) {
-        queue.sync { current = payload }
-    }
-
-    func snapshot() -> Payload {
-        queue.sync { current }
-    }
+```json
+{
+  "theme": "ninja",
+  "running": true,
+  "paused": false,
+  "miles": 3.14,
+  "steps": 6240,
+  "hr": 142,
+  "elapsed": "00:28:10.00",
+  "elapsedSeconds": 1690,
+  "elapsedMilliseconds": 1690000,
+  "pace": "8:58",
+  "activeCalories": 418.0,
+  "totalCalories": 518.0,
+  "goalMiles": 5.0,
+  "progress": 0.63
 }
-6. Server Implementation Options
-Option A – SwiftNIO
+```
 
-High performance
+### `GET /stats`
 
-Full control
+Returns the latest stored workout snapshot.
 
-Production-ready
+### `GET /`
 
-Option B – GCDWebServer
+Returns the NinjaPace browser HUD.
 
-Lightweight
+---
 
-Simple setup
+## 5. Relay Port Behavior
 
-Ideal for local relay use
+The preferred relay port is:
 
-Option C – Vapor (overkill)
+```text
+8787
+```
 
-Not recommended for this use case
+If that port is unavailable, the Mac companion searches a small fallback range rather than failing immediately.
 
-7. OBS Integration
-Browser Source Settings
+Current relay range:
 
-URL:
+```text
+8787 ... 8795
+```
 
-http://192.xxx.x.xxx:8787/
+The active URL is shown in the Mac UI so it can be copied into OBS or used by the iPhone relay configuration.
 
-Refresh interval:
+---
 
-500ms – 1000ms
+## 6. Telemetry Model
 
-HUD Fetch Example
+Representative relay state includes:
 
-JavaScript:
+```swift
+struct Stats: Codable, Sendable {
+    var theme: String?
 
-setInterval(async () => {
-  const res = await fetch('/stats');
-  const data = await res.json();
-  updateHUD(data);
-}, 1000);
-8. State Logic
+    var miles: Double
+    var steps: Int
+    var hr: Int
 
-HUD states derived from payload:
+    var elapsed: String
+    var elapsedSeconds: Int
+    var elapsedMilliseconds: Int
 
-Condition    HUD State
-running == false    Idle
-paused == true    Paused
-running == true    Live
-progress >= 1.0    Goal Hit
-9. Performance Characteristics
+    var pace: String
 
-Memory only (no persistence)
+    var activeCalories: Double
+    var totalCalories: Double
 
-No database
+    var goalMiles: Double
+    var progress: Double
 
-No disk writes
+    var running: Bool
+    var paused: Bool
 
-Minimal CPU usage
+    var hudConfiguration: HUDConfiguration?
+}
+```
 
-Sub-10ms response time typical
+The relay also tracks when the latest payload was received.
 
-10. Failure Modes
-Port Already in Use
+That timestamp is used for smooth local elapsed-time rendering.
 
-Error:
+---
 
-POSIXErrorCode(rawValue: 48): Address already in use
+## 7. Smooth Elapsed-Time Interpolation
 
-Solution:
+The Mac does not need a new HTTP POST every visual frame.
 
-Kill previous instance
+When a workout is:
 
-Ensure single server binding
+```text
+running == true
+paused  == false
+```
 
-iPhone Cannot Connect
+the Mac can add local wall-clock delta time to the latest authoritative elapsed checkpoint.
 
-Verify LAN IP
+When the workout is paused or idle, elapsed time remains fixed at the last authoritative value.
 
-Ensure firewall allows port
+This keeps the browser HUD smooth without increasing network traffic.
 
-Avoid using localhost on iPhone
+---
 
-11. Security Model
+## 8. HUD States
 
-Designed for local network use only.
+The browser HUD derives its visual state from telemetry.
 
-No authentication
+| Condition | HUD State |
+|---|---|
+| `running == false` | Idle |
+| `running == true && paused == false` | Live |
+| `paused == true` | Paused |
+| Goal reached with valid goal | Goal |
 
-No HTTPS
+A goal of `0.00` is valid for a rest day and must not accidentally trigger Goal state.
 
-Intended for trusted LAN environment
+---
 
-Future optional:
+## 9. Warrior Themes
 
-Token validation
+The Mac companion understands the same six warrior identities as the iPhone app:
 
-LAN-only bind restriction
+- 🥷 Ninja
+- 🪓 Viking
+- 🛡️ Knight
+- 🏴‍☠️ Pirate
+- 🤖 Cyborg
+- 🏛️ Spartan
 
-Auto-discovery via Bonjour
+The current theme affects:
 
-12. UI Design (Optional macOS App Shell)
+- Mac UI presentation
+- Relay toolbar/icon treatment
+- HUD colors
+- HUD title
+- HUD subtitle
+- Browser overlay styling
 
-Mac app may include:
+Theme state can follow the iPhone in real time.
 
-Server start/stop toggle
+---
 
-IP address display
+## 10. HUD Studio
 
-Port configuration
+The Mac includes a dedicated HUD customization experience.
 
-Live stats preview
+Configuration modes:
 
-Connection log
+```text
+Follow iPhone
+Customize on This Mac
+```
 
-13. Future Enhancements
+The editor supports:
 
-Multi-streamer support
+- Live preview
+- Simulated preview states
+- HUD title and subtitle
+- State colors
+- Background colors and opacity
+- Border settings
+- Glow intensity
+- Scale
+- Text scale
+- Text weight
+- Text outline
+- Visible metric toggles
 
-Multiple stat profiles
+Supported metrics include:
 
-WebSocket push instead of polling
+- Miles
+- Steps
+- Heart Rate
+- Calories
+- Elapsed
+- Pace
+- Goal
 
-Direct StreamElements integration
+Local Mac overrides are persisted independently from iPhone-following mode.
 
-JSON schema validation
+[![HUD Studio following iPhone with read-only controls](../docs/images/previews/mac-hud-studio-follow-iphone.png)](../docs/images/mac/mac-hud-studio-follow-iphone.png) [![HUD Studio customizing locally with edited title and subtitle](../docs/images/previews/mac-hud-studio-local.png)](../docs/images/mac/mac-hud-studio-local.png)
 
-Auto-discover via Bonjour
+---
 
-LAN QR code pairing
+## 11. OBS Integration
 
-14. App Store Positioning
+Typical OBS Browser Source URL:
 
-If released separately:
+```text
+http://<mac-lan-ip>:8787/
+```
 
-Category
+Use the active port shown by NinjaPace Mac if the relay falls back from `8787`.
 
-Developer Tools / Utilities
+Typical flow:
 
-Tagline
+```text
+Apple Watch
+    ↓
+iPhone
+    ↓
+NinjaPace Mac
+    ↓
+OBS Browser Source
+    ↓
+Twitch / YouTube / Recording
+```
 
-“Local streaming telemetry relay for NinjaPace.”
+The HUD is designed for:
+
+- Gameplay streams
+- Treadmill running
+- Fitness challenges
+- Marathon streams
+- Speedrunning
+- Endurance events
+- Recorded workout content
+
+---
+
+## 12. Local Network Model
+
+NinjaPace Mac is designed for trusted local-network use.
+
+Normal deployment characteristics:
+
+- Local HTTP
+- No cloud account
+- No remote backend required
+- No database required for live relay state
+- Latest telemetry held in memory
+- Browser HUD served locally
+
+The iPhone must use the Mac's LAN address rather than `localhost`.
+
+---
+
+## 13. Failure Handling
+
+The Mac UI surfaces failures that require user action.
+
+Examples include:
+
+- Relay could not start
+- Relay stopped unexpectedly
+- Streaming HUD resource unavailable
+
+Port conflicts are mitigated by automatic fallback across the relay port range.
+
+Ordinary telemetry gaps do not erase the last known workout state.
+
+---
+
+## 14. iPhone Background Limitation
+
+The Apple Watch workout can continue in the background because it owns the HealthKit workout session.
+
+The iPhone, however, may eventually be suspended by iOS when backgrounded.
+
+If the iPhone stops forwarding fresh telemetry:
+
+- The Mac retains the latest workout snapshot
+- The Mac can continue elapsed-time interpolation from that checkpoint
+- Fresh metric updates resume when the iPhone becomes active again
+
+The Watch sends live WatchConnectivity messages alongside HealthKit mirroring to wake the reachable iPhone for fresh telemetry. The phone gives immediate relay uploads a finite background completion window.
+
+---
+
+## 15. Automated UI Testing
+
+The Mac companion has deterministic XCUITest launch states.
+
+Launch environment:
+
+```text
+NINJAPACE_MAC_UI_TEST_STATE
+```
+
+Supported states:
+
+```text
+offline
+waiting
+live
+```
+
+Current UI coverage includes:
+
+- Offline relay dashboard
+- Online relay without active workout
+- Live telemetry
+- Stop relay → offline transition
+- HUD Studio window launch
+- Launch performance
+
+Mac XCUITest note:
+
+Some macOS SwiftUI `StaticText` values are exposed through `.value` rather than `.label`.
+
+The UI-test helper reads `.value` first and falls back to `.label`.
+
+---
+
+## 16. Technology
+
+Primary technologies:
+
+- Swift
+- SwiftUI
+- Network framework
+- Combine
+- Foundation
+- Codable
+- Local HTTP
+- XCTest / XCUITest
+- HTML / CSS / JavaScript for the browser HUD
+
+---
+
+## 17. Design Principles
+
+### Local First
+The normal streaming path stays on the LAN.
+
+### Lightweight Relay
+The Mac does not own the workout and does not duplicate the iPhone's training logic.
+
+### Smooth Presentation
+Elapsed time is interpolated locally for a responsive HUD.
+
+### Optional Streaming
+The Mac is not required for the core fitness experience.
+
+### Shared Identity
+Theme and HUD presentation remain consistent across Watch, iPhone, and Mac.
+
+---
+
+## 18. Potential Future Enhancements
+
+- Additional stream integrations
+- WebSocket push
+- More HUD layout presets
+- Multiple saved HUD profiles
+- Additional local discovery workflows
+- Expanded stream status diagnostics
+- Multi-output browser layouts
+
+---
+
+# 🥷 NinjaPace Mac
+
+**Receive the telemetry.  
+Serve the HUD.  
+Own the stream.**

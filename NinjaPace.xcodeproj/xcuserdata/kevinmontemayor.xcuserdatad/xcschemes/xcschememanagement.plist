@@ -7,17 +7,65 @@
 		<key>NinjaPace.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>2</integer>
+			<integer>0</integer>
 		</dict>
 		<key>NinjaPaceMac.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>0</integer>
+			<integer>1</integer>
 		</dict>
-		<key>NinjaPaceWatch Watch App.xcscheme_^#shared#^_</key>
+		<key>NinjaPaceWatch.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>1</integer>
+			<integer>2</integer>
+		</dict>
+	</dict>
+	<key>SuppressBuildableAutocreation</key>
+	<dict>
+		<key>83005A33305DEFC100B1CF6A</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>8334D39D2F36F67F00FB84B4</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>8334D3A92F36F68000FB84B4</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>8334D3B32F36F68000FB84B4</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>8334D3DB2F3E852A00FB84B4</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>8334D3E92F3E852C00FB84B4</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>8334D3F32F3E852C00FB84B4</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>83B6B8B52F342A0900F9C0BC</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>83B6B8CE2F342A0A00F9C0BC</key>
+		<dict>
+			<key>primary</key>
+			<true/>
 		</dict>
 	</dict>
 </dict>

@@ -1,0 +1,37 @@
+{
+  "configurations" : [
+    {
+      "id" : "7271FFE1-4B84-4FD1-ABE4-E1AC5D136F9C",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "performanceAntipatternCheckerEnabled" : true,
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:NinjaPace.xcodeproj",
+      "identifier" : "8334D39D2F36F67F00FB84B4",
+      "name" : "NinjaPaceWatch"
+    }
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : false,
+      "target" : {
+        "containerPath" : "container:NinjaPace.xcodeproj",
+        "identifier" : "8334D3A92F36F68000FB84B4",
+        "name" : "NinjaPaceWatchTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:NinjaPace.xcodeproj",
+        "identifier" : "8334D3B32F36F68000FB84B4",
+        "name" : "NinjaPaceWatchUITests"
+      }
+    }
+  ],
+  "version" : 1
+}

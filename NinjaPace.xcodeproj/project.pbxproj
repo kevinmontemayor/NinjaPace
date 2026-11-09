@@ -7,31 +7,38 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		8334D3BE2F36F68000FB84B4 /* NinjaPaceWatch Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 8334D39E2F36F67F00FB84B4 /* NinjaPaceWatch Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		8334D3BE2F36F68000FB84B4 /* NinjaPaceWatch.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 8334D39E2F36F67F00FB84B4 /* NinjaPaceWatch.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		8334D3D02F3802A100FB84B4 /* WatchConnectivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8334D3CC2F37FF5F00FB84B4 /* WatchConnectivity.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		83005A38305DEFC100B1CF6A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 83B6B8AE2F342A0900F9C0BC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 83B6B8B52F342A0900F9C0BC;
+			remoteInfo = NinjaPace;
+		};
 		8334D3AB2F36F68000FB84B4 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 83B6B8AE2F342A0900F9C0BC /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 8334D39D2F36F67F00FB84B4;
-			remoteInfo = "NinjaPaceWatch Watch App";
+			remoteInfo = NinjaPaceWatch;
 		};
 		8334D3B52F36F68000FB84B4 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 83B6B8AE2F342A0900F9C0BC /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 8334D39D2F36F67F00FB84B4;
-			remoteInfo = "NinjaPaceWatch Watch App";
+			remoteInfo = NinjaPaceWatch;
 		};
 		8334D3BC2F36F68000FB84B4 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 83B6B8AE2F342A0900F9C0BC /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 8334D39D2F36F67F00FB84B4;
-			remoteInfo = "NinjaPaceWatch Watch App";
+			remoteInfo = NinjaPaceWatch;
 		};
 		8334D3EB2F3E852C00FB84B4 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -46,13 +53,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 8334D3DB2F3E852A00FB84B4;
 			remoteInfo = NinjaPaceMac;
-		};
-		83B6B8C62F342A0A00F9C0BC /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 83B6B8AE2F342A0900F9C0BC /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 83B6B8B52F342A0900F9C0BC;
-			remoteInfo = NinjaPace;
 		};
 		83B6B8D02F342A0A00F9C0BC /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -70,7 +70,7 @@
 			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
 			dstSubfolderSpec = 16;
 			files = (
-				8334D3BE2F36F68000FB84B4 /* NinjaPaceWatch Watch App.app in Embed Watch Content */,
+				8334D3BE2F36F68000FB84B4 /* NinjaPaceWatch.app in Embed Watch Content */,
 			);
 			name = "Embed Watch Content";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -78,20 +78,37 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		83005A34305DEFC100B1CF6A /* NinjaPaceTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NinjaPaceTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		83008E3A2F52753A00A094EE /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
-		8334D39E2F36F67F00FB84B4 /* NinjaPaceWatch Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "NinjaPaceWatch Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		8334D3AA2F36F68000FB84B4 /* NinjaPaceWatch Watch AppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "NinjaPaceWatch Watch AppTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		8334D3B42F36F68000FB84B4 /* NinjaPaceWatch Watch AppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "NinjaPaceWatch Watch AppUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		832966623076ECE4008A64B8 /* NinjaPaceWatch.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = NinjaPaceWatch.xctestplan; sourceTree = "<group>"; };
+		832966633076ED27008A64B8 /* NinjaPaceMac.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = NinjaPaceMac.xctestplan; sourceTree = "<group>"; };
+		832966643076ED33008A64B8 /* NinjaPace.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = NinjaPace.xctestplan; sourceTree = "<group>"; };
+		8334D39E2F36F67F00FB84B4 /* NinjaPaceWatch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NinjaPaceWatch.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		8334D3AA2F36F68000FB84B4 /* NinjaPaceWatchTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NinjaPaceWatchTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		8334D3B42F36F68000FB84B4 /* NinjaPaceWatchUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NinjaPaceWatchUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		8334D3CC2F37FF5F00FB84B4 /* WatchConnectivity.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WatchConnectivity.framework; path = System/Library/Frameworks/WatchConnectivity.framework; sourceTree = SDKROOT; };
 		8334D3DC2F3E852A00FB84B4 /* NinjaPaceMac.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NinjaPaceMac.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8334D3EA2F3E852C00FB84B4 /* NinjaPaceMacTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NinjaPaceMacTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		8334D3F42F3E852C00FB84B4 /* NinjaPaceMacUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NinjaPaceMacUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		83B6B8B62F342A0900F9C0BC /* NinjaPace.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NinjaPace.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		83B6B8C52F342A0A00F9C0BC /* NinjaPaceTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NinjaPaceTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		83B6B8CF2F342A0A00F9C0BC /* NinjaPaceUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NinjaPaceUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		832C075B302257CF009EF3E6 /* Exceptions for "NinjaPace" folder in "NinjaPaceMac" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Models/HUDConfiguration.swift,
+			);
+			target = 8334D3DB2F3E852A00FB84B4 /* NinjaPaceMac */;
+		};
+		832C0765302279D9009EF3E6 /* Exceptions for "NinjaPaceMac" folder in "NinjaPaceWatch" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				overlay.html,
+			);
+			target = 8334D39D2F36F67F00FB84B4 /* NinjaPaceWatch */;
+		};
 		83976F702F468E39002C6FA4 /* Exceptions for "NinjaPace" folder in "NinjaPace" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -99,33 +116,57 @@
 			);
 			target = 83B6B8B52F342A0900F9C0BC /* NinjaPace */;
 		};
-		83976F712F468E39002C6FA4 /* Exceptions for "NinjaPace" folder in "NinjaPaceWatch Watch App" target */ = {
+		83976F712F468E39002C6FA4 /* Exceptions for "NinjaPace" folder in "NinjaPaceWatch" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				Models/HUDConfiguration.swift,
 				Models/StatsPushClient.swift,
 			);
-			target = 8334D39D2F36F67F00FB84B4 /* NinjaPaceWatch Watch App */;
+			target = 8334D39D2F36F67F00FB84B4 /* NinjaPaceWatch */;
+		};
+		83E5FA46308BC3FF00CE7A50 /* Exceptions for "NinjaPaceWatch" folder in "NinjaPace" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Resources/Sounds/goal_complete_cyborg_watch.wav,
+				Resources/Sounds/goal_complete_knight_watch.wav,
+				Resources/Sounds/goal_complete_ninja_watch.wav,
+				Resources/Sounds/goal_complete_pirate_watch.wav,
+				Resources/Sounds/goal_complete_spartan_watch.wav,
+				Resources/Sounds/goal_complete_viking_watch.wav,
+			);
+			target = 83B6B8B52F342A0900F9C0BC /* NinjaPace */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		8334D39F2F36F67F00FB84B4 /* NinjaPaceWatch Watch App */ = {
+		83005A35305DEFC100B1CF6A /* NinjaPaceTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = "NinjaPaceWatch Watch App";
+			path = NinjaPaceTests;
 			sourceTree = "<group>";
 		};
-		8334D3AD2F36F68000FB84B4 /* NinjaPaceWatch Watch AppTests */ = {
+		8334D39F2F36F67F00FB84B4 /* NinjaPaceWatch */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = "NinjaPaceWatch Watch AppTests";
+			exceptions = (
+				83E5FA46308BC3FF00CE7A50 /* Exceptions for "NinjaPaceWatch" folder in "NinjaPace" target */,
+			);
+			path = NinjaPaceWatch;
 			sourceTree = "<group>";
 		};
-		8334D3B72F36F68000FB84B4 /* NinjaPaceWatch Watch AppUITests */ = {
+		8334D3AD2F36F68000FB84B4 /* NinjaPaceWatchTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = "NinjaPaceWatch Watch AppUITests";
+			path = NinjaPaceWatchTests;
+			sourceTree = "<group>";
+		};
+		8334D3B72F36F68000FB84B4 /* NinjaPaceWatchUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = NinjaPaceWatchUITests;
 			sourceTree = "<group>";
 		};
 		8334D3DD2F3E852A00FB84B4 /* NinjaPaceMac */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				832C0765302279D9009EF3E6 /* Exceptions for "NinjaPaceMac" folder in "NinjaPaceWatch" target */,
+			);
 			path = NinjaPaceMac;
 			sourceTree = "<group>";
 		};
@@ -143,14 +184,10 @@
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
 				83976F702F468E39002C6FA4 /* Exceptions for "NinjaPace" folder in "NinjaPace" target */,
-				83976F712F468E39002C6FA4 /* Exceptions for "NinjaPace" folder in "NinjaPaceWatch Watch App" target */,
+				83976F712F468E39002C6FA4 /* Exceptions for "NinjaPace" folder in "NinjaPaceWatch" target */,
+				832C075B302257CF009EF3E6 /* Exceptions for "NinjaPace" folder in "NinjaPaceMac" target */,
 			);
 			path = NinjaPace;
-			sourceTree = "<group>";
-		};
-		83B6B8C82F342A0A00F9C0BC /* NinjaPaceTests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = NinjaPaceTests;
 			sourceTree = "<group>";
 		};
 		83B6B8D22F342A0A00F9C0BC /* NinjaPaceUITests */ = {
@@ -161,6 +198,13 @@
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		83005A31305DEFC100B1CF6A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8334D39B2F36F67F00FB84B4 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -211,13 +255,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		83B6B8C22F342A0A00F9C0BC /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		83B6B8CC2F342A0A00F9C0BC /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -239,16 +276,19 @@
 		83B6B8AD2F342A0900F9C0BC = {
 			isa = PBXGroup;
 			children = (
+				832966643076ED33008A64B8 /* NinjaPace.xctestplan */,
+				832966633076ED27008A64B8 /* NinjaPaceMac.xctestplan */,
+				832966623076ECE4008A64B8 /* NinjaPaceWatch.xctestplan */,
+				8334D3DD2F3E852A00FB84B4 /* NinjaPaceMac */,
 				83008E3A2F52753A00A094EE /* README.md */,
 				83976F632F468E39002C6FA4 /* NinjaPace */,
-				8334D3DD2F3E852A00FB84B4 /* NinjaPaceMac */,
-				83B6B8C82F342A0A00F9C0BC /* NinjaPaceTests */,
 				83B6B8D22F342A0A00F9C0BC /* NinjaPaceUITests */,
-				8334D39F2F36F67F00FB84B4 /* NinjaPaceWatch Watch App */,
-				8334D3AD2F36F68000FB84B4 /* NinjaPaceWatch Watch AppTests */,
-				8334D3B72F36F68000FB84B4 /* NinjaPaceWatch Watch AppUITests */,
+				8334D39F2F36F67F00FB84B4 /* NinjaPaceWatch */,
+				8334D3AD2F36F68000FB84B4 /* NinjaPaceWatchTests */,
+				8334D3B72F36F68000FB84B4 /* NinjaPaceWatchUITests */,
 				8334D3ED2F3E852C00FB84B4 /* NinjaPaceMacTests */,
 				8334D3F72F3E852C00FB84B4 /* NinjaPaceMacUITests */,
+				83005A35305DEFC100B1CF6A /* NinjaPaceTests */,
 				8334D3CB2F37FF5F00FB84B4 /* Frameworks */,
 				83B6B8B72F342A0900F9C0BC /* Products */,
 			);
@@ -258,14 +298,14 @@
 			isa = PBXGroup;
 			children = (
 				83B6B8B62F342A0900F9C0BC /* NinjaPace.app */,
-				83B6B8C52F342A0A00F9C0BC /* NinjaPaceTests.xctest */,
 				83B6B8CF2F342A0A00F9C0BC /* NinjaPaceUITests.xctest */,
-				8334D39E2F36F67F00FB84B4 /* NinjaPaceWatch Watch App.app */,
-				8334D3AA2F36F68000FB84B4 /* NinjaPaceWatch Watch AppTests.xctest */,
-				8334D3B42F36F68000FB84B4 /* NinjaPaceWatch Watch AppUITests.xctest */,
+				8334D39E2F36F67F00FB84B4 /* NinjaPaceWatch.app */,
+				8334D3AA2F36F68000FB84B4 /* NinjaPaceWatchTests.xctest */,
+				8334D3B42F36F68000FB84B4 /* NinjaPaceWatchUITests.xctest */,
 				8334D3DC2F3E852A00FB84B4 /* NinjaPaceMac.app */,
 				8334D3EA2F3E852C00FB84B4 /* NinjaPaceMacTests.xctest */,
 				8334D3F42F3E852C00FB84B4 /* NinjaPaceMacUITests.xctest */,
+				83005A34305DEFC100B1CF6A /* NinjaPaceTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -273,9 +313,32 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		8334D39D2F36F67F00FB84B4 /* NinjaPaceWatch Watch App */ = {
+		83005A33305DEFC100B1CF6A /* NinjaPaceTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 8334D3C62F36F68000FB84B4 /* Build configuration list for PBXNativeTarget "NinjaPaceWatch Watch App" */;
+			buildConfigurationList = 83005A3A305DEFC100B1CF6A /* Build configuration list for PBXNativeTarget "NinjaPaceTests" */;
+			buildPhases = (
+				83005A30305DEFC100B1CF6A /* Sources */,
+				83005A31305DEFC100B1CF6A /* Frameworks */,
+				83005A32305DEFC100B1CF6A /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				83005A39305DEFC100B1CF6A /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				83005A35305DEFC100B1CF6A /* NinjaPaceTests */,
+			);
+			name = NinjaPaceTests;
+			packageProductDependencies = (
+			);
+			productName = NinjaPaceTests;
+			productReference = 83005A34305DEFC100B1CF6A /* NinjaPaceTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		8334D39D2F36F67F00FB84B4 /* NinjaPaceWatch */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8334D3C62F36F68000FB84B4 /* Build configuration list for PBXNativeTarget "NinjaPaceWatch" */;
 			buildPhases = (
 				8334D39A2F36F67F00FB84B4 /* Sources */,
 				8334D39B2F36F67F00FB84B4 /* Frameworks */,
@@ -286,18 +349,18 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				8334D39F2F36F67F00FB84B4 /* NinjaPaceWatch Watch App */,
+				8334D39F2F36F67F00FB84B4 /* NinjaPaceWatch */,
 			);
-			name = "NinjaPaceWatch Watch App";
+			name = NinjaPaceWatch;
 			packageProductDependencies = (
 			);
-			productName = "NinjaPaceWatch Watch App";
-			productReference = 8334D39E2F36F67F00FB84B4 /* NinjaPaceWatch Watch App.app */;
+			productName = NinjaPaceWatch;
+			productReference = 8334D39E2F36F67F00FB84B4 /* NinjaPaceWatch.app */;
 			productType = "com.apple.product-type.application";
 		};
-		8334D3A92F36F68000FB84B4 /* NinjaPaceWatch Watch AppTests */ = {
+		8334D3A92F36F68000FB84B4 /* NinjaPaceWatchTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 8334D3C72F36F68000FB84B4 /* Build configuration list for PBXNativeTarget "NinjaPaceWatch Watch AppTests" */;
+			buildConfigurationList = 8334D3C72F36F68000FB84B4 /* Build configuration list for PBXNativeTarget "NinjaPaceWatchTests" */;
 			buildPhases = (
 				8334D3A62F36F68000FB84B4 /* Sources */,
 				8334D3A72F36F68000FB84B4 /* Frameworks */,
@@ -309,18 +372,18 @@
 				8334D3AC2F36F68000FB84B4 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				8334D3AD2F36F68000FB84B4 /* NinjaPaceWatch Watch AppTests */,
+				8334D3AD2F36F68000FB84B4 /* NinjaPaceWatchTests */,
 			);
-			name = "NinjaPaceWatch Watch AppTests";
+			name = NinjaPaceWatchTests;
 			packageProductDependencies = (
 			);
-			productName = "NinjaPaceWatch Watch AppTests";
-			productReference = 8334D3AA2F36F68000FB84B4 /* NinjaPaceWatch Watch AppTests.xctest */;
+			productName = NinjaPaceWatchTests;
+			productReference = 8334D3AA2F36F68000FB84B4 /* NinjaPaceWatchTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		8334D3B32F36F68000FB84B4 /* NinjaPaceWatch Watch AppUITests */ = {
+		8334D3B32F36F68000FB84B4 /* NinjaPaceWatchUITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 8334D3C82F36F68000FB84B4 /* Build configuration list for PBXNativeTarget "NinjaPaceWatch Watch AppUITests" */;
+			buildConfigurationList = 8334D3C82F36F68000FB84B4 /* Build configuration list for PBXNativeTarget "NinjaPaceWatchUITests" */;
 			buildPhases = (
 				8334D3B02F36F68000FB84B4 /* Sources */,
 				8334D3B12F36F68000FB84B4 /* Frameworks */,
@@ -332,13 +395,13 @@
 				8334D3B62F36F68000FB84B4 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				8334D3B72F36F68000FB84B4 /* NinjaPaceWatch Watch AppUITests */,
+				8334D3B72F36F68000FB84B4 /* NinjaPaceWatchUITests */,
 			);
-			name = "NinjaPaceWatch Watch AppUITests";
+			name = NinjaPaceWatchUITests;
 			packageProductDependencies = (
 			);
-			productName = "NinjaPaceWatch Watch AppUITests";
-			productReference = 8334D3B42F36F68000FB84B4 /* NinjaPaceWatch Watch AppUITests.xctest */;
+			productName = NinjaPaceWatchUITests;
+			productReference = 8334D3B42F36F68000FB84B4 /* NinjaPaceWatchUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 		8334D3DB2F3E852A00FB84B4 /* NinjaPaceMac */ = {
@@ -433,29 +496,6 @@
 			productReference = 83B6B8B62F342A0900F9C0BC /* NinjaPace.app */;
 			productType = "com.apple.product-type.application";
 		};
-		83B6B8C42F342A0A00F9C0BC /* NinjaPaceTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 83B6B8DC2F342A0A00F9C0BC /* Build configuration list for PBXNativeTarget "NinjaPaceTests" */;
-			buildPhases = (
-				83B6B8C12F342A0A00F9C0BC /* Sources */,
-				83B6B8C22F342A0A00F9C0BC /* Frameworks */,
-				83B6B8C32F342A0A00F9C0BC /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				83B6B8C72F342A0A00F9C0BC /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				83B6B8C82F342A0A00F9C0BC /* NinjaPaceTests */,
-			);
-			name = NinjaPaceTests;
-			packageProductDependencies = (
-			);
-			productName = NinjaPaceTests;
-			productReference = 83B6B8C52F342A0A00F9C0BC /* NinjaPaceTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
 		83B6B8CE2F342A0A00F9C0BC /* NinjaPaceUITests */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 83B6B8DF2F342A0A00F9C0BC /* Build configuration list for PBXNativeTarget "NinjaPaceUITests" */;
@@ -486,9 +526,13 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 2600;
+				LastSwiftUpdateCheck = 2700;
 				LastUpgradeCheck = 2600;
 				TargetAttributes = {
+					83005A33305DEFC100B1CF6A = {
+						CreatedOnToolsVersion = 27.0;
+						TestTargetID = 83B6B8B52F342A0900F9C0BC;
+					};
 					8334D39D2F36F67F00FB84B4 = {
 						CreatedOnToolsVersion = 26.0;
 					};
@@ -514,10 +558,6 @@
 					83B6B8B52F342A0900F9C0BC = {
 						CreatedOnToolsVersion = 26.0;
 					};
-					83B6B8C42F342A0A00F9C0BC = {
-						CreatedOnToolsVersion = 26.0;
-						TestTargetID = 83B6B8B52F342A0900F9C0BC;
-					};
 					83B6B8CE2F342A0A00F9C0BC = {
 						CreatedOnToolsVersion = 26.0;
 						TestTargetID = 83B6B8B52F342A0900F9C0BC;
@@ -541,19 +581,26 @@
 			projectRoot = "";
 			targets = (
 				83B6B8B52F342A0900F9C0BC /* NinjaPace */,
-				83B6B8C42F342A0A00F9C0BC /* NinjaPaceTests */,
 				83B6B8CE2F342A0A00F9C0BC /* NinjaPaceUITests */,
-				8334D39D2F36F67F00FB84B4 /* NinjaPaceWatch Watch App */,
-				8334D3A92F36F68000FB84B4 /* NinjaPaceWatch Watch AppTests */,
-				8334D3B32F36F68000FB84B4 /* NinjaPaceWatch Watch AppUITests */,
+				8334D39D2F36F67F00FB84B4 /* NinjaPaceWatch */,
+				8334D3A92F36F68000FB84B4 /* NinjaPaceWatchTests */,
+				8334D3B32F36F68000FB84B4 /* NinjaPaceWatchUITests */,
 				8334D3DB2F3E852A00FB84B4 /* NinjaPaceMac */,
 				8334D3E92F3E852C00FB84B4 /* NinjaPaceMacTests */,
 				8334D3F32F3E852C00FB84B4 /* NinjaPaceMacUITests */,
+				83005A33305DEFC100B1CF6A /* NinjaPaceTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		83005A32305DEFC100B1CF6A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8334D39C2F36F67F00FB84B4 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -603,13 +650,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		83B6B8C32F342A0A00F9C0BC /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		83B6B8CD2F342A0A00F9C0BC /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -620,6 +660,13 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		83005A30305DEFC100B1CF6A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8334D39A2F36F67F00FB84B4 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -669,13 +716,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		83B6B8C12F342A0A00F9C0BC /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		83B6B8CB2F342A0A00F9C0BC /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -686,19 +726,24 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		83005A39305DEFC100B1CF6A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 83B6B8B52F342A0900F9C0BC /* NinjaPace */;
+			targetProxy = 83005A38305DEFC100B1CF6A /* PBXContainerItemProxy */;
+		};
 		8334D3AC2F36F68000FB84B4 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 8334D39D2F36F67F00FB84B4 /* NinjaPaceWatch Watch App */;
+			target = 8334D39D2F36F67F00FB84B4 /* NinjaPaceWatch */;
 			targetProxy = 8334D3AB2F36F68000FB84B4 /* PBXContainerItemProxy */;
 		};
 		8334D3B62F36F68000FB84B4 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 8334D39D2F36F67F00FB84B4 /* NinjaPaceWatch Watch App */;
+			target = 8334D39D2F36F67F00FB84B4 /* NinjaPaceWatch */;
 			targetProxy = 8334D3B52F36F68000FB84B4 /* PBXContainerItemProxy */;
 		};
 		8334D3BD2F36F68000FB84B4 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 8334D39D2F36F67F00FB84B4 /* NinjaPaceWatch Watch App */;
+			target = 8334D39D2F36F67F00FB84B4 /* NinjaPaceWatch */;
 			targetProxy = 8334D3BC2F36F68000FB84B4 /* PBXContainerItemProxy */;
 		};
 		8334D3EC2F3E852C00FB84B4 /* PBXTargetDependency */ = {
@@ -711,11 +756,6 @@
 			target = 8334D3DB2F3E852A00FB84B4 /* NinjaPaceMac */;
 			targetProxy = 8334D3F52F3E852C00FB84B4 /* PBXContainerItemProxy */;
 		};
-		83B6B8C72F342A0A00F9C0BC /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 83B6B8B52F342A0900F9C0BC /* NinjaPace */;
-			targetProxy = 83B6B8C62F342A0A00F9C0BC /* PBXContainerItemProxy */;
-		};
 		83B6B8D12F342A0A00F9C0BC /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 83B6B8B52F342A0900F9C0BC /* NinjaPace */;
@@ -724,18 +764,62 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		83005A3B305DEFC100B1CF6A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = VSH4NVQRKF;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 27.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.github.kevinmontemayor.NinjaPaceTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/NinjaPace.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/NinjaPace";
+			};
+			name = Debug;
+		};
+		83005A3C305DEFC100B1CF6A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = VSH4NVQRKF;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 27.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.github.kevinmontemayor.NinjaPaceTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/NinjaPace.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/NinjaPace";
+			};
+			name = Release;
+		};
 		8334D3C02F36F68000FB84B4 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = "NinjaPaceWatch Watch App/NinjaPaceWatch Watch App.entitlements";
+				CODE_SIGN_ENTITLEMENTS = NinjaPaceWatch/NinjaPaceWatch.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = VSH4NVQRKF;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "NinjaPaceWatch-Watch-App-Info.plist";
+				INFOPLIST_FILE = "NinjaPaceWatch-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = NinjaPaceWatch;
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "NinjaPaceWatch reads heart rate, steps, and distance to display live stats.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "NinjaPace utilizes health save for delivery to local network live stream to HUD.";
@@ -766,13 +850,13 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = "NinjaPaceWatch Watch App/NinjaPaceWatch Watch App.entitlements";
+				CODE_SIGN_ENTITLEMENTS = NinjaPaceWatch/NinjaPaceWatch.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = VSH4NVQRKF;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "NinjaPaceWatch-Watch-App-Info.plist";
+				INFOPLIST_FILE = "NinjaPaceWatch-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = NinjaPaceWatch;
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "NinjaPaceWatch reads heart rate, steps, and distance to display live stats.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "NinjaPace utilizes health save for delivery to local network live stream to HUD.";
@@ -816,7 +900,7 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 4;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/NinjaPaceWatch Watch App.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/NinjaPaceWatch Watch App";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/NinjaPaceWatch.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/NinjaPaceWatch";
 				WATCHOS_DEPLOYMENT_TARGET = 26.0;
 			};
 			name = Debug;
@@ -839,7 +923,7 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 4;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/NinjaPaceWatch Watch App.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/NinjaPaceWatch Watch App";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/NinjaPaceWatch.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/NinjaPaceWatch";
 				WATCHOS_DEPLOYMENT_TARGET = 26.0;
 			};
 			name = Release;
@@ -861,7 +945,7 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 4;
-				TEST_TARGET_NAME = "NinjaPaceWatch Watch App";
+				TEST_TARGET_NAME = NinjaPaceWatch;
 				WATCHOS_DEPLOYMENT_TARGET = 26.0;
 			};
 			name = Debug;
@@ -883,7 +967,7 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 4;
-				TEST_TARGET_NAME = "NinjaPaceWatch Watch App";
+				TEST_TARGET_NAME = NinjaPaceWatch;
 				WATCHOS_DEPLOYMENT_TARGET = 26.0;
 			};
 			name = Release;
@@ -1195,15 +1279,15 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = NinjaPace/Info.plist;
+				INFOPLIST_KEY_NSFaceIDUsageDescription = "Face ID is used to reveal and edit private network addresses.";
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "Used to display workout stats on live stream";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Used to start and record workouts";
-				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "Stream workout stats to OBS on your local network.\nStream workout stats to OBS on your local network.";
+				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "NinjaPace uses your local network to automatically discover and connect to the NinjaPace Relay running on your Mac.";
 				INFOPLIST_KEY_NSMotionUsageDescription = "Motion capture is used to record steps and vitals";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1233,15 +1317,15 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = NinjaPace/Info.plist;
+				INFOPLIST_KEY_NSFaceIDUsageDescription = "Face ID is used to reveal and edit private network addresses.";
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "Used to display workout stats on live stream";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Used to start and record workouts";
-				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "Stream workout stats to OBS on your local network.\nStream workout stats to OBS on your local network.";
+				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "NinjaPace uses your local network to automatically discover and connect to the NinjaPace Relay running on your Mac.";
 				INFOPLIST_KEY_NSMotionUsageDescription = "Motion capture is used to record steps and vitals";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1256,50 +1340,6 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Release;
-		};
-		83B6B8DD2F342A0A00F9C0BC /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = VSH4NVQRKF;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.github.kevinmontemayor.NinjaPaceTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				STRING_CATALOG_GENERATE_SYMBOLS = NO;
-				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/NinjaPace.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/NinjaPace";
-			};
-			name = Debug;
-		};
-		83B6B8DE2F342A0A00F9C0BC /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = VSH4NVQRKF;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.github.kevinmontemayor.NinjaPaceTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				STRING_CATALOG_GENERATE_SYMBOLS = NO;
-				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/NinjaPace.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/NinjaPace";
 			};
 			name = Release;
 		};
@@ -1346,7 +1386,16 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		8334D3C62F36F68000FB84B4 /* Build configuration list for PBXNativeTarget "NinjaPaceWatch Watch App" */ = {
+		83005A3A305DEFC100B1CF6A /* Build configuration list for PBXNativeTarget "NinjaPaceTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				83005A3B305DEFC100B1CF6A /* Debug */,
+				83005A3C305DEFC100B1CF6A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		8334D3C62F36F68000FB84B4 /* Build configuration list for PBXNativeTarget "NinjaPaceWatch" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				8334D3C02F36F68000FB84B4 /* Debug */,
@@ -1355,7 +1404,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		8334D3C72F36F68000FB84B4 /* Build configuration list for PBXNativeTarget "NinjaPaceWatch Watch AppTests" */ = {
+		8334D3C72F36F68000FB84B4 /* Build configuration list for PBXNativeTarget "NinjaPaceWatchTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				8334D3C22F36F68000FB84B4 /* Debug */,
@@ -1364,7 +1413,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		8334D3C82F36F68000FB84B4 /* Build configuration list for PBXNativeTarget "NinjaPaceWatch Watch AppUITests" */ = {
+		8334D3C82F36F68000FB84B4 /* Build configuration list for PBXNativeTarget "NinjaPaceWatchUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				8334D3C42F36F68000FB84B4 /* Debug */,
@@ -1414,15 +1463,6 @@
 			buildConfigurations = (
 				83B6B8DA2F342A0A00F9C0BC /* Debug */,
 				83B6B8DB2F342A0A00F9C0BC /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		83B6B8DC2F342A0A00F9C0BC /* Build configuration list for PBXNativeTarget "NinjaPaceTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				83B6B8DD2F342A0A00F9C0BC /* Debug */,
-				83B6B8DE2F342A0A00F9C0BC /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

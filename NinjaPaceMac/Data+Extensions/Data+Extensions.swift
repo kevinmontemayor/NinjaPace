@@ -13,8 +13,7 @@ extension Data {
         var start = startIndex
         var splits = 0
 
-        while splits < maxSplits,
-              let range = self[start...].range(of: separator) {
+        while splits < maxSplits, let range = self[start...].range(of: separator) {
             let chunk = self[start..<range.lowerBound]
             if !omittingEmptySubsequences || !chunk.isEmpty { result.append(chunk) }
             start = range.upperBound

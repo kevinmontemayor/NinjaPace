@@ -1,0 +1,37 @@
+{
+  "configurations" : [
+    {
+      "id" : "4635F9D1-00C5-4981-B2F2-6A8D2DC5392C",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "performanceAntipatternCheckerEnabled" : true,
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:NinjaPace.xcodeproj",
+      "identifier" : "8334D3DB2F3E852A00FB84B4",
+      "name" : "NinjaPaceMac"
+    }
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : false,
+      "target" : {
+        "containerPath" : "container:NinjaPace.xcodeproj",
+        "identifier" : "8334D3E92F3E852C00FB84B4",
+        "name" : "NinjaPaceMacTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:NinjaPace.xcodeproj",
+        "identifier" : "8334D3F32F3E852C00FB84B4",
+        "name" : "NinjaPaceMacUITests"
+      }
+    }
+  ],
+  "version" : 1
+}

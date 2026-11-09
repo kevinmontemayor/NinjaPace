@@ -10,8 +10,10 @@ import Foundation
 
 public protocol StatsPushClientProtocol: ObservableObject {
     associatedtype StatusType
+
     var macBaseURL: String { get set }
     var status: StatusType { get }
+
     @MainActor
     func testConnection() async
 }
@@ -29,19 +31,21 @@ final class StatsPushClient: StatsPushClientProtocol {
     typealias StatusType = Status
 
     // MARK: - Persistence
+
     private static let storedBaseURLKey = "StatsPushClient.macBaseURL"
 
     /// What the user edits in the app UI.
     @Published var macBaseURL: String {
         didSet { save(macBaseURL) }
     }
-    
-    @Published var warningMessage: String? = nil
 
+    @Published var warningMessage: String? = nil
     @Published var enabled: Bool = false
     @Published var status: Status = .idle
 
     private var timer: Timer?
+    private var pushTask: Task<Void, Never>?
+    private var consecutiveFailures = 0
 
     struct Payload: Codable {
         var theme: String
@@ -50,6 +54,7 @@ final class StatsPushClient: StatsPushClientProtocol {
         var hr: Int
         var elapsed: String
         var elapsedSeconds: Int
+        let elapsedMilliseconds: Int
         var pace: String
         var activeCalories: Double
         var totalCalories: Double
@@ -57,39 +62,50 @@ final class StatsPushClient: StatsPushClientProtocol {
         var progress: Double
         var running: Bool
         var paused: Bool
+        var hudConfiguration: HUDConfiguration?
+        /// Timestamp representing when this telemetry snapshot was created
+        var sentAt: TimeInterval = Date().timeIntervalSince1970
     }
 
     init(defaultBaseURL: String = "") {
-        // If we have a stored value, use it. Otherwise use defaultBaseURL (or empty).
         let stored = UserDefaults.standard.string(forKey: Self.storedBaseURLKey)
         self.macBaseURL = stored ?? defaultBaseURL
         self.warningMessage = nil
     }
 
     // MARK: - Public API
+
     func startPushing(getPayload: @escaping () -> Payload) {
         stopPushing()
         enabled = true
         status = .pushing
 
-        timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
-            Task { @MainActor in
-                guard self.enabled else { return }
-                await self.push(getPayload())
+        pushTask = Task { [weak self] in
+            guard let self else { return }
+
+            while !Task.isCancelled, self.enabled {
+                let payload = getPayload()
+                await self.push(payload)
+
+                do {
+                    try await Task.sleep(for: .milliseconds(250))
+                } catch {
+                    return
+                }
             }
         }
-        RunLoop.main.add(timer!, forMode: .common)
     }
 
     func stopPushing() {
-        timer?.invalidate()
-        timer = nil
+        pushTask?.cancel()
+        pushTask = nil
         enabled = false
         status = .idle
     }
 
-    /// Handy for “Test Connection” button in UI
-    @MainActor func testConnection() async {
+    /// Handy for “Test Connection” button in UI.
+    @MainActor
+    func testConnection() async {
         guard let url = buildURL(path: "/stats") else {
             status = .failed("Invalid Mac URL")
             return
@@ -97,7 +113,9 @@ final class StatsPushClient: StatsPushClientProtocol {
 
         do {
             let (_, resp) = try await URLSession.shared.data(from: url)
+
             if let http = resp as? HTTPURLResponse, (200...299).contains(http.statusCode) {
+                consecutiveFailures = 0
                 status = .success
             } else {
                 status = .failed("Mac responded, but not OK")
@@ -108,13 +126,14 @@ final class StatsPushClient: StatsPushClientProtocol {
     }
 
     // MARK: - Internals
+
     private func push(_ payload: Payload) async {
         guard let url = buildURL(path: "/ingest") else {
             status = .failed("Invalid Mac URL")
             return
         }
 
-        var req = URLRequest(url: url)
+        var req = URLRequest(url: url, timeoutInterval: 5)
         req.httpMethod = "POST"
         req.setValue("application/json", forHTTPHeaderField: "Content-Type")
 
@@ -122,19 +141,36 @@ final class StatsPushClient: StatsPushClientProtocol {
             req.httpBody = try JSONEncoder().encode(payload)
             let (_, resp) = try await URLSession.shared.data(for: req)
 
-            if let http = resp as? HTTPURLResponse, http.statusCode != 204 && http.statusCode != 200 {
-                status = .failed("HTTP \(http.statusCode)")
-                print("❌ push HTTP", http.statusCode)
-            } else {
-                status = .success
-                print("✅ pushed")
+            if let http = resp as? HTTPURLResponse {
+                if http.statusCode != 204 && http.statusCode != 200 {
+                    consecutiveFailures += 1
+                    if consecutiveFailures >= 3 {
+                        status = .failed("HTTP \(http.statusCode)")
+                    }
+                } else {
+                    consecutiveFailures = 0
+                    status = .success
+                }
             }
         } catch {
-            status = .failed(error.localizedDescription)
-            print("❌ push failed:", error.localizedDescription)
+            consecutiveFailures += 1
+            if consecutiveFailures >= 3 {
+                status = .failed("Unable to reach NinjaPaceMac")
+            }
         }
     }
     
+    func pushNow(_ payload: Payload) async {
+        guard enabled else { return }
+        // Finish the upload triggered by a Watch wake even if iOS backgrounds us
+        // before URLSession completes. This is finite work, not a keep-alive loop.
+#if os(iOS)
+        let backgroundDelivery = RelayBackgroundDelivery()
+        defer { backgroundDelivery.end() }
+#endif
+        await push(payload)
+    }
+
     static func formatHMS(_ seconds: Int) -> String {
         let h = seconds / 3600
         let m = (seconds % 3600) / 60
@@ -145,12 +181,12 @@ final class StatsPushClient: StatsPushClientProtocol {
     private func buildURL(path: String) -> URL? {
         let normalized = normalizeBaseURL(macBaseURL)
         guard !normalized.isEmpty else { return nil }
-        
+
         if normalized.contains("localhost") || normalized.contains("127.0.0.1") {
             // "localhost" points to the device itself (iPhone/iPad)
-            self.warningMessage = "Using localhost will point to this device, not your Mac. Enter your Mac's IP (e.g., 192.168.x.x:8787)."
+            warningMessage = "Using localhost will point to this device, not your Mac. Enter your Mac's IP (e.g., 192.168.x.x:8787)."
         } else {
-            self.warningMessage = nil
+            warningMessage = nil
         }
 
         return URL(string: normalized + path)
@@ -163,7 +199,8 @@ final class StatsPushClient: StatsPushClientProtocol {
         if string.isEmpty { return "" }
 
         // If user types just "192.###.#.###:8787" -> add http://
-        if !string.lowercased().hasPrefix("http://") && !string.lowercased().hasPrefix("https://") {
+        if !string.lowercased().hasPrefix("http://") &&
+            !string.lowercased().hasPrefix("https://") {
             string = "http://" + string
         }
 

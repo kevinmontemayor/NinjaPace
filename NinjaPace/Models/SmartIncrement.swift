@@ -25,8 +25,7 @@ enum SmartIncrement {
         let raw = (value + step)
         let clamped = max(minValue, min(maxValue, raw))
         let snapped = DistanceLocks.snap(clamped, snapWindow: snapWindow)
-
-        // keep nice formatting (optional)
+        
         return snapped.roundedTo(5)
     }
 }

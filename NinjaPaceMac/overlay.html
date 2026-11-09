@@ -1,0 +1,597 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>NinjaPace HUD</title>
+
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: transparent;
+      overflow: hidden;
+    }
+
+    :root {
+      --glow: rgba(255, 0, 80, 0.70);
+      --glow2: rgba(255, 0, 80, 0.40);
+      --text: rgba(255, 30, 60, 0.98);
+      --muted: rgba(255, 30, 60, 0.76);
+      --bar-bg: rgba(255, 0, 80, 0.18);
+      --bar-fill: rgba(255, 0, 80, 0.98);
+      --hud-background: rgba(0, 0, 0, 0);
+      --border-width: 2px;
+      --pulse: 0.35;
+      --pulse-effective: var(--pulse);
+      --goal-pulse: 0.90;
+      --hud-scale: 1;
+      --text-scale: 1;
+      --text-weight: 900;
+      --text-outline: 0.65;
+    }
+
+    .ring {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: fit-content;
+      padding: var(--border-width);
+      border-radius: 20px;
+      box-sizing: border-box;
+      background: transparent;
+      transform: scale(var(--hud-scale));
+      transform-origin: top left;
+      box-shadow:
+        0 0 calc(8px + var(--pulse-effective) * 16px) var(--glow),
+        0 0 calc(16px + var(--pulse-effective) * 30px) var(--glow2);
+    }
+
+    .ring::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 20px;
+      padding: var(--border-width);
+      background: linear-gradient(135deg, transparent, var(--text), transparent);
+      -webkit-mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      opacity: calc(0.55 + var(--pulse-effective) * 0.45);
+      animation: pulse 2s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    .ring[data-goal="1"] {
+      --pulse-effective: var(--goal-pulse);
+    }
+
+    .ring[data-goal="1"]::before {
+      animation: goal-pulse 1.1s ease-in-out infinite;
+    }
+
+    .ring[data-border="0"] {
+      padding: 0;
+    }
+
+    .ring[data-border="0"]::before {
+      display: none;
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        opacity: 0.65;
+        filter: blur(0.35px);
+      }
+
+      50% {
+        opacity: 1;
+        filter: blur(0);
+      }
+    }
+
+    @keyframes goal-pulse {
+      0% {
+        opacity: 0.45;
+        transform: scale(1);
+      }
+
+      45% {
+        opacity: 1;
+        transform: scale(1.012);
+      }
+
+      100% {
+        opacity: 0.60;
+        transform: scale(1);
+      }
+    }
+
+    .hud {
+      position: relative;
+      width: 340px;
+      padding: 8px 10px;
+      border-radius: 18px;
+      overflow: hidden;
+      box-sizing: border-box;
+      color: var(--text);
+      background-color: var(--hud-background);
+      font-family:
+        ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+        "Liberation Mono", "Courier New", monospace;
+      font-weight: 900;
+      text-shadow:
+        calc(-1px * var(--text-outline)) calc(-1px * var(--text-outline)) 0 rgba(0, 0, 0, 0.95),
+        calc(1px * var(--text-outline)) calc(-1px * var(--text-outline)) 0 rgba(0, 0, 0, 0.95),
+        calc(-1px * var(--text-outline)) calc(1px * var(--text-outline)) 0 rgba(0, 0, 0, 0.95),
+        calc(1px * var(--text-outline)) calc(1px * var(--text-outline)) 0 rgba(0, 0, 0, 0.95),
+        0 0 6px var(--glow2),
+        0 2px 10px rgba(0, 0, 0, 0.55);
+    }
+
+    .title-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      margin-bottom: 8px;
+      width: 100%;
+      min-width: 0;
+    }
+
+    .title-stack {
+      flex: 1 1 auto;
+      min-width: 0;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+    }
+
+    .title {
+      min-width: 0;
+      overflow: hidden;
+      font-size: calc(13px * var(--text-scale));
+      font-weight: var(--text-weight);
+      letter-spacing: 0.3px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .subtitle {
+      min-width: 0;
+      overflow: hidden;
+      color: var(--text);
+      font-size: calc(11px * var(--text-scale));
+      font-weight: var(--text-weight);
+      letter-spacing: 0.2px;
+      opacity: 1;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .state-tag {
+      flex: 0 0 auto;
+      margin-left: auto;
+      font-size: calc(11px * var(--text-scale));
+      font-weight: var(--text-weight);
+      opacity: 0.9;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      padding-top: 1px;
+    }
+
+    .metric-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      margin: 3px 0;
+    }
+
+    .label {
+      flex: 0 0 auto;
+      min-width: 58px;
+      font-size: calc(16px * var(--text-scale));
+      font-weight: var(--text-weight);
+      opacity: 1;
+    }
+
+    .value {
+      flex: 0 0 auto;
+      text-align: right;
+      font-size: calc(20px * var(--text-scale));
+      font-weight: var(--text-weight);
+      letter-spacing: 0.3px;
+    }
+
+    .goal-container {
+      display: block;
+    }
+
+    .bar-wrap {
+      height: 8px;
+      margin-top: 8px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: var(--bar-bg);
+    }
+
+    .bar-fill {
+      width: 0%;
+      height: 100%;
+      background: var(--bar-fill);
+      box-shadow: 0 0 10px var(--glow2);
+      transition: width 250ms linear;
+    }
+
+    .goal-label {
+      font-size: calc(14px * var(--text-scale));
+    }
+
+    .goal-value {
+      font-size: calc(18px * var(--text-scale));
+    }
+
+    .small {
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: calc(17px * var(--text-scale));
+      font-weight: var(--text-weight);
+      opacity: 0.88;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="ring" id="root" data-state="idle" data-goal="0">
+    <div class="hud">
+      <div class="title-row">
+        <div class="title-stack">
+          <div class="title" id="hudTitle">🥷 NINJA HUD 🥷</div>
+          <div class="subtitle" id="hudSubtitle"></div>
+        </div>
+        <div class="state-tag" id="stateTag">IDLE ⏳</div>
+      </div>
+
+      <div class="metric-row" id="milesRow">
+        <div class="label">Miles</div>
+        <div class="value" id="miles">—</div>
+      </div>
+
+      <div class="metric-row" id="stepsRow">
+        <div class="label">Steps</div>
+        <div class="value" id="steps">—</div>
+      </div>
+
+      <div class="metric-row" id="heartRateRow">
+        <div class="label">Heart Rate</div>
+        <div class="value" id="hr">—</div>
+      </div>
+
+      <div class="metric-row" id="caloriesRow">
+        <div class="label">Calories</div>
+        <div class="value" id="calories">—</div>
+      </div>
+
+      <div class="metric-row" id="elapsedRow">
+        <div class="label">Elapsed</div>
+        <div class="value" id="elapsed">—</div>
+      </div>
+
+      <div class="metric-row" id="paceRow">
+        <div class="label">Pace</div>
+        <div class="value" id="pace">—</div>
+      </div>
+
+      <div class="goal-container" id="goalContainer">
+        <div class="metric-row" id="goalRow">
+          <div class="label goal-label">Goal</div>
+          <div class="value goal-value" id="goal">—</div>
+        </div>
+
+        <div class="bar-wrap">
+          <div class="bar-fill" id="bar"></div>
+        </div>
+
+        <div class="small" id="percent"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const root = document.getElementById("root");
+    const hud = document.querySelector(".hud");
+    const elements = {
+      title: document.getElementById("hudTitle"),
+      subtitle: document.getElementById("hudSubtitle"),
+      stateTag: document.getElementById("stateTag"),
+      miles: document.getElementById("miles"),
+      steps: document.getElementById("steps"),
+      heartRate: document.getElementById("hr"),
+      calories: document.getElementById("calories"),
+      elapsed: document.getElementById("elapsed"),
+      pace: document.getElementById("pace"),
+      goal: document.getElementById("goal"),
+      bar: document.getElementById("bar"),
+      percent: document.getElementById("percent")
+    };
+
+    function clamp(value, minimum, maximum) {
+      return Math.max(minimum, Math.min(maximum, value));
+    }
+
+    function clamp01(value) {
+      return clamp(value, 0, 1);
+    }
+
+    function boundedNumber(value, fallback, minimum, maximum) {
+      const number = Number(value ?? fallback);
+      return Number.isFinite(number) ? clamp(number, minimum, maximum) : fallback;
+    }
+
+    function hexToRGBA(hex, alpha = 1) {
+      const cleaned = String(hex || "#FFFFFF").trim().replace("#", "");
+      const normalized = cleaned.length === 3
+        ? cleaned.split("").map(character => character + character).join("")
+        : cleaned;
+
+      if (!/^[0-9a-fA-F]{6}$/.test(normalized)) {
+        return `rgba(255,255,255,${alpha})`;
+      }
+
+      const value = parseInt(normalized, 16);
+      const red = (value >> 16) & 255;
+      const green = (value >> 8) & 255;
+      const blue = value & 255;
+      return `rgba(${red},${green},${blue},${alpha})`;
+    }
+
+    function setVisible(id, visible, displayType = "flex") {
+      const element = document.getElementById(id);
+      if (element) element.style.display = visible ? displayType : "none";
+    }
+
+    function heartRateToPulse(heartRate) {
+      if (!heartRate || heartRate <= 0) return 0.20;
+      const normalized = (heartRate - 80) / (170 - 80);
+      return clamp(0.25 + normalized * 0.75, 0.25, 1);
+    }
+
+    function determineState(running, paused, goalHit) {
+      if (goalHit) return { key: "goal", label: "GOAL 🟢" };
+      if (running && paused) return { key: "paused", label: "PAUSED ⏸️" };
+      if (running) return { key: "live", label: "LIVE ✅" };
+      return { key: "idle", label: "IDLE ⏳" };
+    }
+
+    function applyConfiguration(config, running, paused, goalHit) {
+      const title = config.title || "🥷 NINJA HUD 🥷";
+      const subtitle = String(config.subtitle || "").trim();
+      const borderEnabled = config.borderEnabled !== false;
+      const borderWidth = boundedNumber(config.borderWidth, 2, 0.5, 6);
+
+      root.dataset.border = borderEnabled ? "1" : "0";
+      document.documentElement.style.setProperty("--border-width", `${borderWidth}px`);
+
+      elements.title.textContent = title;
+      elements.subtitle.textContent = subtitle;
+      elements.subtitle.style.display = subtitle ? "block" : "none";
+
+      const liveColor = config.liveColor || "#FF0050";
+      const pausedColor = config.pausedColor || "#FFCC00";
+      const idleColor = config.idleColor || "#B4B4B4";
+      const goalColor = config.goalColor || "#00FF78";
+
+      const textScale = boundedNumber(config.textScale, 1, 0.85, 1.5);
+      const textWeight = boundedNumber(config.textWeight, 900, 600, 950);
+      const textOutline = boundedNumber(config.textOutline, 0.65, 0, 1);
+      const glowIntensity = boundedNumber(config.glowIntensity, 0.75, 0, 1);
+      const scale = boundedNumber(config.scale, 1, 0.5, 2);
+
+      let activeColor = idleColor;
+      if (goalHit) activeColor = goalColor;
+      else if (running && paused) activeColor = pausedColor;
+      else if (running) activeColor = liveColor;
+
+      const fallbackBackgroundColor = config.backgroundColor || "#000000";
+      const fallbackBackgroundOpacity = Number(config.backgroundOpacity ?? 0);
+
+      let backgroundColor = fallbackBackgroundColor;
+      let rawBackgroundOpacity = fallbackBackgroundOpacity;
+
+      if (goalHit) {
+        backgroundColor = config.goalBackgroundColor || fallbackBackgroundColor;
+        rawBackgroundOpacity = Number(config.goalBackgroundOpacity ?? fallbackBackgroundOpacity);
+      } else if (running && paused) {
+        backgroundColor = config.pausedBackgroundColor || fallbackBackgroundColor;
+        rawBackgroundOpacity = Number(config.pausedBackgroundOpacity ?? fallbackBackgroundOpacity);
+      } else if (running) {
+        backgroundColor = config.liveBackgroundColor || fallbackBackgroundColor;
+        rawBackgroundOpacity = Number(config.liveBackgroundOpacity ?? fallbackBackgroundOpacity);
+      } else {
+        backgroundColor = config.idleBackgroundColor || fallbackBackgroundColor;
+        rawBackgroundOpacity = Number(config.idleBackgroundOpacity ?? fallbackBackgroundOpacity);
+      }
+
+      const backgroundOpacity = Number.isFinite(rawBackgroundOpacity)
+        ? clamp(rawBackgroundOpacity, 0, 1)
+        : 0;
+
+      const style = document.documentElement.style;
+      style.setProperty("--glow", hexToRGBA(activeColor, 0.70 * glowIntensity));
+      style.setProperty("--glow2", hexToRGBA(activeColor, 0.40 * glowIntensity));
+      style.setProperty("--text", hexToRGBA(activeColor, 0.98));
+      style.setProperty("--muted", hexToRGBA(activeColor, 0.76));
+      style.setProperty("--bar-bg", hexToRGBA(activeColor, 0.18));
+      style.setProperty("--bar-fill", hexToRGBA(activeColor, 0.98));
+      style.setProperty("--hud-background", hexToRGBA(backgroundColor, backgroundOpacity));
+      style.setProperty("--hud-scale", scale.toFixed(2));
+      style.setProperty("--text-scale", textScale.toFixed(2));
+      style.setProperty("--text-weight", Math.round(textWeight).toString());
+
+      const outlinePixels = textOutline <= 0.001 ? 0 : 0.25 + textOutline * 1.75;
+      hud.style.textShadow = outlinePixels === 0
+        ? "0 0 6px var(--glow2), 0 2px 10px rgba(0,0,0,0.60)"
+        : `-${outlinePixels}px -${outlinePixels}px 0 rgba(0,0,0,0.95),
+           ${outlinePixels}px -${outlinePixels}px 0 rgba(0,0,0,0.95),
+           -${outlinePixels}px ${outlinePixels}px 0 rgba(0,0,0,0.95),
+           ${outlinePixels}px ${outlinePixels}px 0 rgba(0,0,0,0.95),
+           0 0 6px var(--glow2),
+           0 2px 10px rgba(0,0,0,0.60)`;
+
+      setVisible("milesRow", config.showMiles !== false);
+      setVisible("stepsRow", config.showSteps !== false);
+      setVisible("heartRateRow", config.showHeartRate !== false);
+      setVisible("caloriesRow", config.showCalories !== false);
+      setVisible("elapsedRow", config.showElapsed !== false);
+      setVisible("paceRow", config.showPace !== false);
+      setVisible("goalContainer", config.showGoal !== false, "block");
+    }
+
+    // MARK: - Smooth Elapsed Clock
+    // The Mac supplies an authoritative elapsedMilliseconds snapshot.
+    // The browser advances it locally between 500 ms /stats polls.
+
+    const elapsedClock = {
+      milliseconds: 0,
+      receivedAt: performance.now(),
+      running: false,
+      paused: false,
+      hasAnchor: false
+    };
+
+    function formatElapsedMilliseconds(milliseconds) {
+      const safeMilliseconds = Math.max(0, Math.floor(milliseconds));
+      const totalSeconds = Math.floor(safeMilliseconds / 1000);
+      const hundredths = Math.floor((safeMilliseconds % 1000) / 10);
+      const hours = Math.floor(totalSeconds / 3600);
+      const minutes = Math.floor((totalSeconds % 3600) / 60);
+      const seconds = totalSeconds % 60;
+
+      return [
+        String(hours).padStart(2, "0"),
+        String(minutes).padStart(2, "0"),
+        String(seconds).padStart(2, "0")
+      ].join(":") + "." + String(hundredths).padStart(2, "0");
+    }
+
+    function currentElapsedMilliseconds() {
+      if (!elapsedClock.hasAnchor) return 0;
+      if (!elapsedClock.running || elapsedClock.paused) return elapsedClock.milliseconds;
+
+      const delta = performance.now() - elapsedClock.receivedAt;
+      return elapsedClock.milliseconds + Math.max(0, delta);
+    }
+
+    function synchronizeElapsedClock(milliseconds, running, paused) {
+      const incomingMilliseconds = Number(milliseconds);
+      if (!Number.isFinite(incomingMilliseconds)) return;
+
+      let correctedMilliseconds = Math.max(0, incomingMilliseconds);
+
+      // Never let a delayed packet move an actively running stopwatch backwards.
+      if (
+        elapsedClock.hasAnchor &&
+        elapsedClock.running &&
+        !elapsedClock.paused &&
+        running &&
+        !paused
+      ) {
+        correctedMilliseconds = Math.max(
+          correctedMilliseconds,
+          currentElapsedMilliseconds()
+        );
+      }
+
+      elapsedClock.milliseconds = correctedMilliseconds;
+      elapsedClock.receivedAt = performance.now();
+      elapsedClock.running = running;
+      elapsedClock.paused = paused;
+      elapsedClock.hasAnchor = true;
+    }
+
+    function renderElapsedClock() {
+      elements.elapsed.textContent = elapsedClock.hasAnchor
+        ? formatElapsedMilliseconds(currentElapsedMilliseconds())
+        : "—";
+
+      requestAnimationFrame(renderElapsedClock);
+    }
+
+    async function tick() {
+      try {
+        const base = window.location.origin?.startsWith("http")
+          ? window.location.origin
+          : "http://localhost:8787";
+
+        const response = await fetch(base + "/stats", { cache: "no-store" });
+        if (!response.ok) {
+          throw new Error(`Stats request failed: ${response.status}`);
+        }
+
+        const data = await response.json();
+        const miles = Number(data.miles ?? 0);
+        const steps = Number(data.steps ?? 0);
+        const heartRate = Number(data.hr ?? 0);
+        const activeCalories = Number(data.activeCalories ?? 0);
+        const elapsedMilliseconds = Number(
+          data.elapsedMilliseconds ?? Number(data.elapsedSeconds ?? 0) * 1000
+        );
+        const pace = data.pace || "—";
+        const running = Boolean(data.running);
+        const paused = Boolean(data.paused);
+
+        synchronizeElapsedClock(elapsedMilliseconds, running, paused);
+
+        let goalMiles = Number(data.goalMiles ?? 3.11);
+        if (!Number.isFinite(goalMiles) || goalMiles < 0) goalMiles = 3.11;
+
+        const hasDistanceGoal = goalMiles > 0;
+        const rawProgress = data.progress != null
+          ? Number(data.progress)
+          : hasDistanceGoal
+            ? miles / goalMiles
+            : 0;
+        const progress = hasDistanceGoal
+          ? clamp01(Number.isFinite(rawProgress) ? rawProgress : 0)
+          : 0;
+        const goalHit = hasDistanceGoal && (miles >= goalMiles || progress >= 1);
+
+        const state = determineState(running, paused, goalHit);
+        root.dataset.state = state.key;
+        root.dataset.goal = goalHit ? "1" : "0";
+        elements.stateTag.textContent = state.label;
+
+        if (!goalHit) {
+          document.documentElement.style.setProperty(
+            "--pulse",
+            heartRateToPulse(heartRate).toFixed(3)
+          );
+        }
+
+        applyConfiguration(data.hudConfiguration || {}, running, paused, goalHit);
+
+        elements.miles.textContent = miles.toFixed(2);
+        elements.steps.textContent = steps.toLocaleString();
+        elements.heartRate.textContent = heartRate > 0 ? `${heartRate} bpm` : "—";
+        elements.calories.textContent = `${Math.round(activeCalories)} kcal`;
+        elements.pace.textContent = pace;
+        elements.goal.textContent = `${miles.toFixed(2)} / ${goalMiles.toFixed(2)}`;
+        elements.bar.style.width = `${Math.round(progress * 100)}%`;
+        elements.percent.textContent = goalHit
+          ? "COMPLETED"
+          : `${Math.round(progress * 100)}%`;
+      } catch (error) {
+        console.error("NinjaPace HUD disconnected:", error);
+      }
+    }
+
+    tick();
+    renderElapsedClock();
+    setInterval(tick, 500);
+  </script>
+</body>
+</html>
