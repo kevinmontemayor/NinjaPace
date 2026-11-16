@@ -23,19 +23,12 @@ struct AchievementUnlockedView: View {
                 .tracking(2)
                 .foregroundStyle(.secondary)
             
-            ZStack {
-                Circle()
-                    .fill(themeStore.theme.tint.opacity(0.18))
-                    .frame(width: 130, height: 130)
-                
-                Circle()
-                    .stroke(themeStore.theme.tint, lineWidth: 3)
-                    .frame(width: 130, height: 130)
-                
-                Image(systemName: achievement.systemImage)
-                    .font(.system(size: 52, weight: .bold))
-                    .foregroundStyle(themeStore.theme.tint)
-            }
+            Image(achievement.badgeAsset)
+                .renderingMode(.original)
+                .resizable()
+                .scaledToFit()
+                .frame(width: 130, height: 130)
+                .accessibilityHidden(true)
             
             VStack(spacing: 8) {
                 Text(achievement.title)
@@ -70,7 +63,7 @@ struct AchievementUnlockedView: View {
 
 #Preview {
     AchievementUnlockedView(
-        achievement: .fiftyGoals,
+        achievement: .hundredGoals,
         dismiss: {}
     )
     .environmentObject(ThemeStore())

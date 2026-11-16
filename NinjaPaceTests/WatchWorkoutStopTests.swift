@@ -101,4 +101,60 @@ struct WatchWorkoutStopTests {
         #expect(!manager.isWorkoutRunning)
         #expect(manager.elapsedString == "00:01:02.00")
     }
+
+    @Test("Relaunch and recovery reuse the workout identity, even when delivery is hours late")
+    func replayAfterRelaunch() throws {
+        let container = try ModelContainer(for: WorkoutRecord.self,
+            configurations: ModelConfiguration(isStoredInMemoryOnly: true))
+        let start = 1_800_000_000.0
+        let id = UUID()
+        func phone() -> HealthStreamManager {
+            let manager = HealthStreamManager(startWatchServices: false)
+            manager.workoutHistoryStore = WorkoutHistoryStore(modelContext: ModelContext(container),
+                achievementUnlockManager: AchievementUnlockManager())
+            return manager
+        }
+        func finish(id: UUID, start: Double, delivered: Double) -> [String: Any] {
+            var result = snapshot(delivered, running: false, elapsed: 600, finalized: true)
+            result["workoutID"] = id.uuidString
+            result["workoutStartedAt"] = start
+            result["workoutEndedAt"] = start + 600
+            result["workoutGoalMiles"] = 2.0
+            return result
+        }
+        phone().applyWatchTelemetry(finish(id: id, start: start, delivered: start + 605))
+        let edits = ModelContext(container)
+        let original = try #require(try edits.fetch(FetchDescriptor<WorkoutRecord>()).first)
+        #expect(original.startedAt == Date(timeIntervalSince1970: start))
+        #expect(original.endedAt == Date(timeIntervalSince1970: start + 600))
+        #expect(original.goalMiles == 2)
+        _ = original.updateGoalMiles(4)
+        try edits.save()
+
+        let relaunched = phone()
+        relaunched.applyWatchTelemetry(finish(id: id, start: start, delivered: start + 7_200))
+        let recovered = RecoveryWorkout(uuid: id, startDate: original.startedAt, endDate: original.endedAt,
+            duration: 600, distanceMiles: nil)
+        #expect(try WorkoutHistoryRecovery.importWorkouts([recovered], into: container) == 0)
+        let secondID = UUID()
+        // A different same-day workout can also first arrive as a completed snapshot.
+        relaunched.applyWatchTelemetry(finish(id: secondID, start: start + 7_200, delivered: start + 8_000))
+        let rows = try ModelContext(container).fetch(FetchDescriptor<WorkoutRecord>())
+        #expect(Set(rows.map(\.id)) == [id, secondID])
+        #expect(rows.count == 2)
+        #expect(rows.first { $0.id == id }?.goalMiles == 4)
+    }
+
+    @Test("An unidentified final snapshot from an older watch cannot create history on launch")
+    func legacyFinalReplay() throws {
+        let container = try ModelContainer(for: WorkoutRecord.self,
+            configurations: ModelConfiguration(isStoredInMemoryOnly: true))
+        let context = ModelContext(container)
+        let manager = HealthStreamManager(startWatchServices: false)
+        manager.workoutHistoryStore = WorkoutHistoryStore(modelContext: context,
+            achievementUnlockManager: AchievementUnlockManager())
+        manager.applyWatchTelemetry(snapshot(500, running: false, elapsed: 62, finalized: true))
+        #expect(try context.fetchCount(FetchDescriptor<WorkoutRecord>()) == 0)
+        #expect(manager.elapsedString == "00:01:02.00")
+    }
 }

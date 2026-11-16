@@ -48,7 +48,8 @@ final class WatchWorkoutManager: NSObject, ObservableObject {
     private var pauseStartedAt: Date?
     private var isMirroringStarting = false
     private var isMirroringActive = false
-    private var workoutFinalized = false
+    // Retain the identity and dates after session teardown for reconnect/snapshot replies.
+    private var completedWorkout: (id: UUID, start: Date, end: Date, goalMiles: Double)?
     
     var elapsedText: String {
         let hours = elapsedSeconds / 3_600
@@ -200,36 +201,29 @@ final class WatchWorkoutManager: NSObject, ObservableObject {
                 }
                 return
             }
-            localBuilder.finishWorkout { [weak manager] _, error in
+            localBuilder.finishWorkout { [weak manager] workout, error in
                 guard let manager else { return }
                 Task { @MainActor [manager] in
+                    guard manager.builder === localBuilder else { return }
                     if error != nil { manager.presentAlert(.workoutFinishFailed) }
                     // Preserve whatever final metrics HealthKit was able to produce.
-                    manager.finalizeWorkoutMetrics(builder: localBuilder, startDate: startDate, endDate: endDate)
+                    manager.finalizeWorkoutMetrics(builder: localBuilder, id: workout?.uuid ?? UUID(),
+                        startDate: workout?.startDate ?? startDate ?? endDate, endDate: workout?.endDate ?? endDate)
                 }
             }
         }
     }
     
-    private func finalizeWorkoutMetrics(builder: HKLiveWorkoutBuilder, startDate: Date?, endDate: Date) {
+    private func finalizeWorkoutMetrics(builder: HKLiveWorkoutBuilder, id: UUID, startDate: Date, endDate: Date) {
         captureFinalHeartRateStatistics(from: builder)
         captureFinalActiveCalories(from: builder)
-        guard let startDate else {
-            totalCalories = activeCalories
-            finishFinalTelemetry()
-            return
-        }
         calculateTotalCalories(startDate: startDate, endDate: endDate) { [weak self] total in
-            guard let self else { return }
+            guard let self, self.builder === builder else { return }
             self.totalCalories = total
-            self.finishFinalTelemetry()
+            self.completedWorkout = (id, startDate, endDate, self.goalMiles)
+            self.send()
+            self.clearWorkoutSessionState()
         }
-    }
-    
-    private func finishFinalTelemetry() {
-        workoutFinalized = true
-        send()
-        clearWorkoutSessionState()
     }
     
     // MARK: - Sending
@@ -358,7 +352,7 @@ final class WatchWorkoutManager: NSObject, ObservableObject {
     
     // MARK: - Helpers
     private func resetWorkoutStateForStart() {
-        workoutFinalized = false
+        completedWorkout = nil
         isMirroringStarting = false
         isMirroringActive = false
         lastDingMile = 0
@@ -446,7 +440,7 @@ final class WatchWorkoutManager: NSObject, ObservableObject {
     }
     
     private func currentTelemetryPayload() -> [String: Any] {
-        [
+        var payload: [String: Any] = [
             "theme": themeKey,
             "goalMiles": goalMiles,
             "miles": miles,
@@ -463,9 +457,18 @@ final class WatchWorkoutManager: NSObject, ObservableObject {
             "pausedDuration": currentPausedDuration,
             "activeCalories": activeCalories,
             "totalCalories": totalCalories,
-            "finalized": workoutFinalized,
+            "finalized": completedWorkout != nil,
             "sentAt": Date().timeIntervalSince1970
         ]
+        if let start = completedWorkout?.start ?? workoutStartDate {
+            payload["workoutStartedAt"] = start.timeIntervalSince1970
+        }
+        if let completedWorkout {
+            payload["workoutID"] = completedWorkout.id.uuidString
+            payload["workoutEndedAt"] = completedWorkout.end.timeIntervalSince1970
+            payload["workoutGoalMiles"] = completedWorkout.goalMiles
+        }
+        return payload
     }
     
     private func checkpointLatestState(_ payload: [String: Any]) {

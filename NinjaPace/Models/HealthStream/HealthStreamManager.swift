@@ -63,6 +63,8 @@ final class HealthStreamManager: NSObject, ObservableObject {
     // MARK: - Workout History
     var workoutHistoryStore: WorkoutHistoryStore?
     private var hasPersistedCurrentWorkout = false
+    private var lastPersistedWatchID: UUID?
+    private var observedLegacyWatchWorkout = false
     private var peakHeartRateBpm = 0
     private var heartRateSum: Double = 0
     private var heartRateSampleCount: Int = 0
@@ -161,6 +163,7 @@ final class HealthStreamManager: NSObject, ObservableObject {
 
     func startWorkout() async {
         hasPersistedCurrentWorkout = false
+        observedLegacyWatchWorkout = false
         peakHeartRateBpm = 0
         heartRateSum = 0
         heartRateSampleCount = 0
@@ -368,14 +371,17 @@ final class HealthStreamManager: NSObject, ObservableObject {
         }
     }
 
-    private func persistCompletedWorkoutIfNeeded(source: String) {
-        guard !hasPersistedCurrentWorkout else { return }
+    private func persistCompletedWorkoutIfNeeded(source: String, id: UUID? = nil, endedAt: Date = Date(),
+                                                workoutGoal: Double? = nil) {
+        if let id {
+            guard id != lastPersistedWatchID else { return }
+        } else if hasPersistedCurrentWorkout { return }
         guard let workoutHistoryStore else {
             userAlert = .workoutSaveFailed
             return
         }
         guard miles > 0.001 || steps > 0 || elapsedSecondsFromWatch > 0 else { return }
-        let endedAt = Date()
+        let goal = workoutGoal ?? goalMiles
         let activeDuration = TimeInterval(max(elapsedSecondsFromWatch, 0))
         let pauseDuration = max(pausedDuration, 0)
         let totalDuration = activeDuration + pauseDuration
@@ -391,9 +397,10 @@ final class HealthStreamManager: NSObject, ObservableObject {
         }
         let record =
             WorkoutRecord(
+                id: id ?? UUID(),
                 startedAt: startedAt,
                 endedAt: endedAt,
-                goalMiles: goalMiles,
+                goalMiles: goal,
                 completedMiles: miles,
                 steps: steps,
                 averageHeartRate: watchAverageHeartRate ?? averageHeartRateForCurrentWorkout,
@@ -402,7 +409,7 @@ final class HealthStreamManager: NSObject, ObservableObject {
                 totalCalories: totalCalories > 0 ? totalCalories : nil,
                 duration: totalDuration,
                 pausedDuration: pauseDuration,
-                wasScheduledRestDay: goalMiles <= 0.001,
+                wasScheduledRestDay: goal <= 0.001,
                 averagePaceSecondsPerMile: averagePace,
                 averageSpeedMPH: averageSpeed,
                 peakSpeedMPH: peakSpeedMPH > 0 ? peakSpeedMPH : nil,
@@ -412,6 +419,7 @@ final class HealthStreamManager: NSObject, ObservableObject {
         do {
             _ = try workoutHistoryStore.saveWorkout(record)
             hasPersistedCurrentWorkout = true
+            lastPersistedWatchID = id
         } catch {
             userAlert = .workoutSaveFailed
         }
@@ -429,11 +437,16 @@ final class HealthStreamManager: NSObject, ObservableObject {
         let incomingFinalized = payload["finalized"] as? Bool ?? false
         let incomingElapsedSeconds = Self.intValue(from: payload["elapsedSeconds"])
         let incomingPausedDuration = max(0, Self.doubleValue(from: payload["pausedDuration"]) ?? 0)
+        let watchStart = Self.doubleValue(from: payload["workoutStartedAt"]).map(Date.init(timeIntervalSince1970:))
+        let newWatchWorkout = watchStart.map { $0 != workoutStartDate } ?? false
         // Detect a workout started independently on Apple Watch.
-        if !wasRunning, incomingRunning == true {
+        // The first packet we see may also be the final one for a different workout.
+        if newWatchWorkout || (!wasRunning && incomingRunning == true) {
             beginObservedWatchWorkoutIfNeeded(
                 initialElapsedSeconds: incomingElapsedSeconds ?? 0, initialPausedDuration: incomingPausedDuration)
         }
+        if let watchStart { workoutStartDate = watchStart }
+        if incomingRunning == true { observedLegacyWatchWorkout = watchStart == nil }
         // Stats
         if let miles = payload["miles"] as? Double {
             self.miles = miles
@@ -498,7 +511,15 @@ final class HealthStreamManager: NSObject, ObservableObject {
         }
         // Authoritative completion
         if incomingFinalized {
-            persistCompletedWorkoutIfNeeded(source: "Apple Watch")
+            if let rawID = payload["workoutID"] as? String, let id = UUID(uuidString: rawID),
+               let end = Self.doubleValue(from: payload["workoutEndedAt"]), watchStart != nil {
+                persistCompletedWorkoutIfNeeded(source: "Apple Watch", id: id,
+                    endedAt: Date(timeIntervalSince1970: end), workoutGoal: Self.doubleValue(from: payload["workoutGoalMiles"]))
+            } else if observedLegacyWatchWorkout {
+                // Older watches have no stable identifier. An idle replay on launch
+                // cannot be distinguished from a previously saved completion.
+                persistCompletedWorkoutIfNeeded(source: "Apple Watch")
+            }
         }
         pushCurrentStateToMac()
     }

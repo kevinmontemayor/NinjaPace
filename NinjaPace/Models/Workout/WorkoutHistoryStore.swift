@@ -30,6 +30,9 @@ final class WorkoutHistoryStore {
         )
 
         let existingWorkouts = try modelContext.fetch(descriptor)
+        // A finalized snapshot can arrive again after relaunch or HealthKit recovery.
+        // Leave the original row (including any goal edits) and achievements alone.
+        guard !existingWorkouts.contains(where: { $0.id == record.id }) else { return [] }
 
         // 2. Determine everything that was already unlocked.
         let achievementsBefore =
@@ -38,7 +41,12 @@ final class WorkoutHistoryStore {
 
         // 3. Insert and persist the new workout.
         modelContext.insert(record)
-        try modelContext.save()
+        do {
+            try modelContext.save()
+        } catch {
+            modelContext.delete(record)
+            throw error
+        }
 
         // 4. Build the new history.
         let updatedWorkouts = existingWorkouts + [record]
