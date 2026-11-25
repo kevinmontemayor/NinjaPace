@@ -17,6 +17,7 @@ struct GoalAchievementNotification {
 @main
 @MainActor
 struct NinjaPaceApp: App {
+    @Environment(\.scenePhase) private var scenePhase
     @StateObject private var themeStore: ThemeStore
     @StateObject private var health: HealthStreamManager
     @StateObject private var sensitiveInfoUnlock: SensitiveInfoUnlockManager
@@ -52,6 +53,7 @@ struct NinjaPaceApp: App {
 
             let themeManager = ThemeStore()
             let healthManager = HealthStreamManager()
+            healthManager.themeKey = themeManager.theme.rawValue
             healthManager.workoutHistoryStore = historyStore
 
 #if DEBUG
@@ -90,6 +92,7 @@ struct NinjaPaceApp: App {
 
     var body: some Scene {
         WindowGroup {
+            Group {
 #if DEBUG
             if let uiTestState {
                 NinjaPaceUITestRoot(initialState: uiTestState)
@@ -122,8 +125,16 @@ struct NinjaPaceApp: App {
                     health.refreshGoalNudges()
                 }
 #endif
+            }
+            .onReceive(NotificationCenter.default.publisher(for: ModelContext.didSave)) { _ in
+                // Goal edits and history imports can change rank outside Training Home.
+                health.scheduleSettingsSyncToWatch()
+            }
         }
         .modelContainer(sharedModelContainer)
+        .onChange(of: scenePhase) { _, phase in
+            if phase == .active { health.syncCurrentSettingsToWatch() }
+        }
     }
 }
 

@@ -1,12 +1,19 @@
+//
+//  WorkoutMetricsSection.swift
+//  NinjaPaceWatchUITests
+//
+//  Created by Kevin Montemayor on 11/23/26.
+//
+
 import XCTest
 
 @MainActor
 final class WorkoutMetricsSection: WatchUITestPage {
-    var elapsedTitle: XCUIElement { app.staticTexts["ET.⏱️"] }
-    var paceTitle: XCUIElement { app.staticTexts["Pace 👟"] }
-    var heartRateTitle: XCUIElement { app.staticTexts["HR ❤️"] }
-    var caloriesTitle: XCUIElement { app.staticTexts["Cal.🔥"] }
-    var stepsTitle: XCUIElement { app.staticTexts["Steps 👣"] }
+    var elapsedTitle: XCUIElement { app.staticTexts["Elapsed"] }
+    var paceTitle: XCUIElement { app.staticTexts["Pace"] }
+    var heartRateTitle: XCUIElement { app.staticTexts["HR"] }
+    var caloriesTitle: XCUIElement { app.staticTexts["Calories"] }
+    var stepsTitle: XCUIElement { app.staticTexts["Steps"] }
     var goalTitle: XCUIElement { app.staticTexts["GOAL"] }
 
     // Query leaf identifiers; a parent identifier can hide metric children on watchOS.

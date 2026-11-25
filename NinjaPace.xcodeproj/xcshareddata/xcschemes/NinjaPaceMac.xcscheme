@@ -16,7 +16,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "8334D3DB2F3E852A00FB84B4"
-               BuildableName = "NinjaPaceMac.app"
+               BuildableName = "NinjaPace.app"
                BlueprintName = "NinjaPaceMac"
                ReferencedContainer = "container:NinjaPace.xcodeproj">
             </BuildableReference>
@@ -75,7 +75,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "8334D3DB2F3E852A00FB84B4"
-            BuildableName = "NinjaPaceMac.app"
+            BuildableName = "NinjaPace.app"
             BlueprintName = "NinjaPaceMac"
             ReferencedContainer = "container:NinjaPace.xcodeproj">
          </BuildableReference>
@@ -92,7 +92,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "8334D3DB2F3E852A00FB84B4"
-            BuildableName = "NinjaPaceMac.app"
+            BuildableName = "NinjaPace.app"
             BlueprintName = "NinjaPaceMac"
             ReferencedContainer = "container:NinjaPace.xcodeproj">
          </BuildableReference>

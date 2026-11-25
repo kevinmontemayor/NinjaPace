@@ -1,6 +1,6 @@
 # Watch UI tests
 
-The seven scenarios in `NinjaPaceWatchUITests.swift` follow the same
+The dashboard and workout scenarios in `NinjaPaceWatchUITests.swift` follow the same
 Page Object Model structure as the iPhone suite:
 
 - **Tests** describe scenarios and assert expected status, controls, and metrics.
@@ -25,14 +25,18 @@ among buttons with the same label. This preserves the existing Watch alert
 workaround. Wait for Cancel to disappear before returning to the dashboard.
 
 Query metric leaf identifiers directly. A parent accessibility identifier can
-hide child metric identifiers on watchOS. Dashboard taps let XCTest scroll controls
-into view on small Watch displays.
+hide child metric identifiers on watchOS. Page helpers swipe vertically until the target page title is visible; settings
+helpers use small Digital Crown steps to bring the entire control below the
+navigation bar. Toggle helpers tap the nested switch and wait for its value to
+change; an existing or partly visible row is not sufficient. Home and Controls share action identifiers,
+so queries select the first current match.
 
 Helpers stay in the Watch test target so Watch-specific behavior can evolve
 without changing iPhone interactions. Xcode automatically includes these Swift
 files through the existing synchronized folder; no project-file edits are needed.
-The app's deterministic DEBUG harness remains unchanged and avoids real workout
-and connectivity dependencies.
+The deterministic DEBUG harness avoids real workout and connectivity dependencies.
+It also supports optional page, theme, goal, and preference-reset launch settings;
+see the Watch README for the complete list.
 
 ## Running
 
@@ -46,3 +50,18 @@ xcodebuild test -project NinjaPace.xcodeproj \
   '-only-testing:NinjaPaceWatchUITests' \
   -parallel-testing-enabled NO
 ```
+
+## Watch v2 coverage
+
+DashboardSettingsPage handles the settings sheet and warrior chooser. Tests verify
+that preferences survive relaunch, disabled Overview is skipped, optional Calories
+is reachable, warrior selection updates the artwork, and rest days omit progress.
+The screenshot test keeps attachments for Home (Ready/Live/Paused), Overview, and
+Distance. Run on both a 40 mm SE and an Ultra to inspect the adaptive layout.
+
+`WatchIdleClockUITests` covers idle eligibility, exclusion from active/paused workouts
+and disabled settings, reappearance after 60 seconds from any page or picker, activity resets, native touch/Crown scrolling above Home, re-enabling after settings,
+and both styles persisting through relaunch. It captures Ninja (early/legendary),
+Viking, Cyborg, and Pirate progression screenshots. Existing Ready dashboard tests
+dismiss the idle screen first; `homeClock` now identifies the idle clock container.
+The DEBUG Start action enters a deterministic running state without invoking HealthKit.

@@ -70,4 +70,11 @@ final class WorkoutHistoryStore {
 
         return newlyUnlocked
     }
+
+    func currentWarriorLevel() throws -> WarriorProgressionLevel {
+        let completedGoals = try modelContext.fetchCount(
+            FetchDescriptor<WorkoutRecord>(predicate: #Predicate { $0.wasGoalCompleted })
+        )
+        return .level(for: completedGoals)
+    }
 }

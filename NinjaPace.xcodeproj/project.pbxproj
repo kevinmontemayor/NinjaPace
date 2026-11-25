@@ -87,7 +87,7 @@
 		8334D3AA2F36F68000FB84B4 /* NinjaPaceWatchTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NinjaPaceWatchTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		8334D3B42F36F68000FB84B4 /* NinjaPaceWatchUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NinjaPaceWatchUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		8334D3CC2F37FF5F00FB84B4 /* WatchConnectivity.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WatchConnectivity.framework; path = System/Library/Frameworks/WatchConnectivity.framework; sourceTree = SDKROOT; };
-		8334D3DC2F3E852A00FB84B4 /* NinjaPaceMac.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NinjaPaceMac.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		8334D3DC2F3E852A00FB84B4 /* NinjaPace.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NinjaPace.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8334D3EA2F3E852C00FB84B4 /* NinjaPaceMacTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NinjaPaceMacTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		8334D3F42F3E852C00FB84B4 /* NinjaPaceMacUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NinjaPaceMacUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		83B6B8B62F342A0900F9C0BC /* NinjaPace.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NinjaPace.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -121,6 +121,7 @@
 			membershipExceptions = (
 				Models/HUDConfiguration.swift,
 				Models/StatsPushClient.swift,
+				Views/WarriorViews/WarriorProgressionLevel.swift,
 			);
 			target = 8334D39D2F36F67F00FB84B4 /* NinjaPaceWatch */;
 		};
@@ -302,7 +303,7 @@
 				8334D39E2F36F67F00FB84B4 /* NinjaPaceWatch.app */,
 				8334D3AA2F36F68000FB84B4 /* NinjaPaceWatchTests.xctest */,
 				8334D3B42F36F68000FB84B4 /* NinjaPaceWatchUITests.xctest */,
-				8334D3DC2F3E852A00FB84B4 /* NinjaPaceMac.app */,
+				8334D3DC2F3E852A00FB84B4 /* NinjaPace.app */,
 				8334D3EA2F3E852C00FB84B4 /* NinjaPaceMacTests.xctest */,
 				8334D3F42F3E852C00FB84B4 /* NinjaPaceMacUITests.xctest */,
 				83005A34305DEFC100B1CF6A /* NinjaPaceTests.xctest */,
@@ -422,8 +423,8 @@
 			name = NinjaPaceMac;
 			packageProductDependencies = (
 			);
-			productName = NinjaPaceMac;
-			productReference = 8334D3DC2F3E852A00FB84B4 /* NinjaPaceMac.app */;
+			productName = NinjaPace;
+			productReference = 8334D3DC2F3E852A00FB84B4 /* NinjaPace.app */;
 			productType = "com.apple.product-type.application";
 		};
 		8334D3E92F3E852C00FB84B4 /* NinjaPaceMacTests */ = {
@@ -829,7 +830,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.github.kevinmontemayor.NinjaPace.watchkitapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
@@ -866,7 +867,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.github.kevinmontemayor.NinjaPace.watchkitapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
@@ -979,7 +980,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = VSH4NVQRKF;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -996,6 +997,7 @@
 				ENABLE_RESOURCE_ACCESS_USB = NO;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = NinjaPace;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.healthcare-fitness";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1005,7 +1007,8 @@
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.github.kevinmontemayor.NinjaPace;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_MODULE_NAME = NinjaPaceMac;
+				PRODUCT_NAME = NinjaPace;
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = macosx;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -1024,7 +1027,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = VSH4NVQRKF;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -1041,6 +1044,7 @@
 				ENABLE_RESOURCE_ACCESS_USB = NO;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = NinjaPace;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.healthcare-fitness";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1050,7 +1054,8 @@
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.github.kevinmontemayor.NinjaPace;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_MODULE_NAME = NinjaPaceMac;
+				PRODUCT_NAME = NinjaPace;
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = macosx;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -1080,7 +1085,7 @@
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/NinjaPaceMac.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/NinjaPaceMac";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/NinjaPace.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/NinjaPace";
 			};
 			name = Debug;
 		};
@@ -1102,7 +1107,7 @@
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/NinjaPaceMac.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/NinjaPaceMac";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/NinjaPace.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/NinjaPace";
 			};
 			name = Release;
 		};
@@ -1294,7 +1299,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.github.kevinmontemayor.NinjaPace;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -1332,7 +1337,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.github.kevinmontemayor.NinjaPace;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;

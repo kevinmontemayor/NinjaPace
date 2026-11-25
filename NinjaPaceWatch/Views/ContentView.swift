@@ -10,9 +10,20 @@ import SwiftUI
 import WatchKit
 
 struct ContentView: View {
+    @Environment(\.scenePhase) private var scenePhase
     @StateObject private var manager = WatchWorkoutManager()
     @State private var confirmAction: ConfirmAction?
     @State private var hasCelebratedCurrentGoal = false
+    @State private var selectedPage: WatchDashboardPage = .home
+    @State private var dashboardSelection: WatchDashboardPage = .home
+    @State private var showsSettings = false
+    @State private var idleClockDismissed = false
+    @State private var idleActivityGeneration = 0
+    @State private var dashboardIsInteracting = false
+    @State private var settingsIsInteracting = false
+    @State private var idleNavigationPageEnabled = false
+    private var preferences = WatchDashboardPreferences()
+    static let idleClockTimeout: TimeInterval = 60
     
     private enum ConfirmAction: Identifiable {
         case pause
@@ -54,28 +65,128 @@ struct ContentView: View {
     init(manager: WatchWorkoutManager? = nil) {
         let instance = manager ?? WatchWorkoutManager()
 
-#if DEBUG
+    #if DEBUG
         if manager == nil {
             Self.configureUITestStateIfNeeded(instance)
+
+            if let rawPage = ProcessInfo.processInfo.environment["NINJAPACE_UI_TEST_PAGE"],
+               let page = WatchDashboardPage(rawValue: rawPage) {
+                _selectedPage = State(initialValue: page)
+                _dashboardSelection = State(initialValue: page)
+            }
         }
-#endif
+    #endif
 
         _manager = StateObject(wrappedValue: instance)
     }
 
     var body: some View {
-        ScrollView(.vertical) {
-            VStack(spacing: 10) {
-                header
-                statsGrid
-                progressBar
-                controlsRow
-                Color.clear.frame(height: 8)
+        ZStack {
+            // The native vertical page indicator is drawn outside TabView's opacity.
+            // Keep its selection in ContentView, but unmount its chrome during idle.
+            if !shouldShowIdleClock {
+                TabView(selection: $dashboardSelection) {
+                    if canOfferIdleClock && idleNavigationPageEnabled {
+                        WatchIdleWarriorClockView(
+                            manager: manager,
+                            theme: theme,
+                            clockStyle: preferences.idleClockStyle,
+                            dismiss: {},
+                            isNavigationPreview: true
+                        )
+                        .tag(WatchDashboardPage.idleClock)
+                    }
+                    ForEach(preferences.visiblePages) { page in
+                        dashboardPage(page)
+                            .background(WatchDashboardBackground(theme: theme))
+                            .onGeometryChange(for: Int.self) { proxy in
+                                Int(proxy.frame(in: .global).minY.rounded())
+                            } action: { _ in
+                                // Crown motion can precede a selected-page change.
+                                if selectedPage == page { recordDashboardActivity() }
+                            }
+                            // Keep the selection tag on the outermost page wrapper.
+                            .tag(page)
+                    }
+                }
+                .tabViewStyle(.verticalPage)
+                .modifier(WatchIdleActivityTracking(onActivity: recordDashboardActivity,
+                    onInteractionChanged: { dashboardIsInteracting = $0 }))
+                .onAppear {
+                    armIdleNavigationPage()
+                }
             }
-            .padding(.vertical, 6)
-            .padding(.horizontal, 10)
+
+            if shouldShowIdleClock {
+                WatchIdleWarriorClockView(manager: manager, theme: theme,
+                    clockStyle: preferences.idleClockStyle,
+                    dismiss: dismissIdleClock)
+            }
         }
-        .scrollIndicators(.hidden)
+        .task(id: idleCountdownToken) {
+            guard let token = idleCountdownToken else { return }
+            do {
+                try await Task.sleep(for: .seconds(idleClockDelay))
+            } catch {
+                return
+            }
+            guard !Task.isCancelled, idleCountdownToken == token else { return }
+            idleNavigationPageEnabled = false
+            showsSettings = false
+            selectedPage = .home
+            dashboardSelection = .home
+            idleClockDismissed = false
+        }
+        .persistentSystemOverlays(shouldShowIdleClock ? .hidden : .automatic)
+        .sheet(
+            isPresented: $showsSettings,
+            onDismiss: {
+                recordDashboardActivity()
+                if !preferences.visiblePages.contains(selectedPage) {
+                    selectedPage = .home
+                    dashboardSelection = .home
+                }
+            }
+        ) {
+            WatchDashboardSettingsView(manager: manager,
+                onActivity: recordDashboardActivity,
+                onInteractionChanged: { settingsIsInteracting = $0 })
+        }
+        .onChange(of: dashboardSelection) { _, page in
+            recordDashboardActivity()
+            if page == .idleClock {
+                idleNavigationPageEnabled = false
+                selectedPage = .home
+                dashboardSelection = .home
+                if canOfferIdleClock {
+                    idleClockDismissed = false
+                }
+                return
+            }
+            selectedPage = page
+        }
+        .onChange(of: manager.running) { wasRunning, running in
+            // Do not reinsert a previously armed preview while Stop is routing Home.
+            idleNavigationPageEnabled = false
+            if wasRunning && !running {
+                idleClockDismissed = false
+                if preferences.showCurrentTime {
+                    selectedPage = .home
+                    dashboardSelection = .home
+                }
+            }
+        }
+        .onChange(of: preferences.showCurrentTime) { _, enabled in
+            if enabled { idleClockDismissed = false }
+        }
+        .onChange(of: preferences.idleClockStyle) { _, _ in
+            idleClockDismissed = false
+        }
+        .onChange(of: preferences.visiblePages) { _, pages in
+            guard !pages.contains(selectedPage) else { return }
+            selectedPage = .home
+            dashboardSelection = .home
+        }
         .onAppear {
             if !isUITesting {
                 manager.activate()
@@ -102,184 +213,95 @@ struct ContentView: View {
         }
     }
 
-    // MARK: - Header
+    private var shouldShowIdleClock: Bool {
+        canOfferIdleClock && dashboardSelection == .home && !idleClockDismissed
+    }
 
-    private var header: some View {
-        HStack(spacing: 8) {
-            Image(systemName: manager.running ? "figure.run" : "figure.walk")
-                .font(.system(size: 18, weight: .semibold))
-                .foregroundStyle(theme.tint)
-                .accessibilityHidden(true)
+    private var canOfferIdleClock: Bool {
+        preferences.showCurrentTime && !manager.running && !showsSettings
+    }
 
-            VStack(alignment: .leading, spacing: 1) {
-                Text("\(theme.emoji) \(theme.headerTitle)")
-                    .font(.headline)
+    private var idleCountdownToken: Int? {
+        preferences.showCurrentTime && !manager.running && !shouldShowIdleClock
+            && scenePhase == .active && !dashboardIsInteracting && !settingsIsInteracting
+            ? idleActivityGeneration : nil
+    }
 
-                Text(statusText)
-                    .font(.caption2)
-                    .foregroundStyle(statusColor)
-                    .accessibilityIdentifier("workoutStatus")
-                    .overlay(alignment: .trailing) {
-                        if manager.running && !manager.paused {
-                            Circle()
-                                .fill(statusColor)
-                                .frame(width: 6, height: 6)
-                                .shadow(radius: 2)
-                                .offset(x: 10)
-                                .accessibilityHidden(true)
-                        }
-                    }
-            }
-
-            Spacer()
-
-            WatchAnimatedThemeIconView(
-                theme: theme,
-                tint: theme.tint,
-                size: 18,
-                isActive: manager.running && !manager.paused
-            )
-            .accessibilityHidden(true)
+    private var idleClockDelay: TimeInterval {
+#if DEBUG
+        if isUITesting,
+           let raw = ProcessInfo.processInfo.environment["NINJAPACE_UI_TEST_IDLE_TIMEOUT"],
+           let seconds = Double(raw), seconds.isFinite, seconds > 0 {
+            return seconds
         }
+#endif
+        return Self.idleClockTimeout
     }
 
-    // MARK: - Stats
-
-    private var statsGrid: some View {
-        VStack(spacing: 6) {
-            statRow(label: "ET.⏱️", value: manager.elapsedText, identifier: "elapsedMetric")
-            statRow(label: "Pace 👟", value: manager.paceString, identifier: "paceMetric")
-            statRow(
-                label: "HR ❤️",
-                value: manager.hr > 0 ? "\(manager.hr) bpm" : "—",
-                identifier: "heartRateMetric"
-            )
-            statRow(
-                label: "Cal.🔥",
-                value: "\(Int(manager.activeCalories.rounded())) kcal",
-                identifier: "caloriesMetric"
-            )
-            statRow(label: "Steps 👣", value: manager.steps.formatted(), identifier: "stepsMetric")
-        }
-        .font(.system(.footnote, design: .monospaced))
-        .padding(.vertical, 8)
-        .padding(.horizontal, 10)
-        .background(.ultraThinMaterial)
-        .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+    private func recordDashboardActivity() {
+        idleActivityGeneration &+= 1
     }
 
-    private var statusText: String {
-        guard manager.running else { return "READY" }
-        return manager.paused ? "PAUSED" : "LIVE"
+    private func dismissIdleClock() {
+        idleNavigationPageEnabled = false
+        idleClockDismissed = true
+        selectedPage = .home
+        dashboardSelection = .home
+        dashboardIsInteracting = false
+        settingsIsInteracting = false
+        recordDashboardActivity()
     }
 
-    private var statusColor: Color {
-        guard manager.running else { return .secondary }
-        return manager.paused ? .yellow : .green
-    }
-
-    private func statRow(label: String, value: String, identifier: String) -> some View {
-        HStack {
-            Text(label).opacity(0.7)
-            Spacer()
-            Text(value)
-                .fontWeight(.semibold)
-                .accessibilityIdentifier(identifier)
-        }
-    }
-
-    // MARK: - Progress Bar
-
-    private var progressBar: some View {
-        HStack {
-            VStack(spacing: 4) {
-                HStack {
-                    Text("GOAL")
-                        .font(.caption2)
-                        .opacity(0.7)
-
-                    Spacer()
-
-                    Text("\(manager.miles, specifier: "%.2f") / \(manager.goalMiles, specifier: "%.2f")")
-                        .font(.caption2)
-                        .fontDesign(.monospaced)
-                        .opacity(0.9)
-                        .accessibilityIdentifier("goalValue")
+    @ViewBuilder
+    private func dashboardPage(_ page: WatchDashboardPage) -> some View {
+        switch page {
+        case .home:
+            WatchWarriorHomeView(manager: manager, theme: theme,
+                featuredMetric: preferences.featuredMetric,
+                isVisible: dashboardSelection == .home && !shouldShowIdleClock && !showsSettings, primaryAction: primaryAction,
+                showSettings: { showsSettings = true })
+                .accessibilityAction(named: "Show warrior clock") {
+                    if canOfferIdleClock { idleClockDismissed = false }
                 }
-
-                ProgressView(value: manager.progress)
-                    .tint(manager.goalMiles > 0 && manager.miles >= manager.goalMiles ? Color.green : theme.tint)
-                    .accessibilityIdentifier("goalProgress")
-                    .accessibilityLabel("Goal Progress")
-                    .accessibilityValue("\(Int((manager.progress * 100).rounded())) percent")
+        case .overview:
+            WatchWorkoutOverviewView(manager: manager, theme: theme, isVisible: dashboardSelection == .overview)
+        case .controls:
+            WatchWorkoutControlsView(manager: manager, theme: theme, isVisible: dashboardSelection == .controls,
+                primaryAction: primaryAction, stopAction: { confirmAction = .stop })
+        default:
+            if let metric = page.metric {
+                WatchFocusMetricView(metric: metric, manager: manager, theme: theme)
             }
-            .padding(.horizontal, 4)
         }
     }
 
-    // MARK: - Controls
-
-    private var controlsRow: some View {
-        HStack(spacing: 8) {
-            Button {
-                if manager.running && !manager.paused {
-                    confirmAction = .pause
-                } else {
-                    manager.toggleStartPause()
-                }
-            } label: {
-                primaryActionLabel
+    private func primaryAction() {
+        if manager.running && !manager.paused {
+            confirmAction = .pause
+        } else if manager.paused {
+            manager.resume()
+        } else {
+#if DEBUG
+            if isUITesting {
+                // Exercise idle/workout presentation transitions without starting HealthKit.
+                manager.running = true
+                manager.paused = false
+                return
             }
-            .buttonStyle(.borderedProminent)
-            .tint(manager.running && !manager.paused ? .yellow : theme.tint)
-            .accessibilityIdentifier("primaryWorkoutButton")
-            .accessibilityLabel(primaryActionTitle)
-
-            Button(role: .destructive) {
-                confirmAction = .stop
-            } label: {
-                Image(systemName: "stop.fill")
-            }
-            .buttonStyle(.bordered)
-            .disabled(!manager.running)
-            .accessibilityIdentifier("stopWorkoutButton")
-            .accessibilityLabel("Stop")
-        }
-    }
-
-    private var primaryActionLabel: some View {
-        HStack(spacing: 6) {
-            if !manager.paused {
-                WatchAnimatedThemeIconView(
-                    theme: theme,
-                    tint: primaryButtonForegroundColor,
-                    size: 17,
-                    isActive: manager.running
-                )
-                .accessibilityHidden(true)
-            }
-
-            Text(primaryActionTitle)
-                .fontWeight(.semibold)
-                .lineLimit(1)
-                .minimumScaleFactor(0.7)
-        }
-    }
-
-    private var primaryActionTitle: String {
-        if manager.paused { return "Resume" }
-        return manager.running ? "Pause" : "Start"
-    }
-
-    private var primaryButtonForegroundColor: Color {
-        if manager.running && !manager.paused { return .black }
-
-        switch theme {
-        case .viking, .spartan: return .black
-        default: return .white
+#endif
+            manager.start()
         }
     }
     
+    private func armIdleNavigationPage() {
+        idleNavigationPageEnabled = false
+        Task { @MainActor in
+            await Task.yield()
+            guard !shouldShowIdleClock else { return }
+            idleNavigationPageEnabled = canOfferIdleClock
+        }
+    }
+
     // MARK: - Goal Completion
     
     private func handleGoalProgressChange(from oldProgress: Double, to newProgress: Double) {
@@ -307,8 +329,22 @@ struct ContentView: View {
             return
         }
 
-        manager.themeKey = "ninja"
-        manager.goalMiles = 5
+        let environment = ProcessInfo.processInfo.environment
+        if environment["NINJAPACE_UI_TEST_RESET_DASHBOARD"] != "0" {
+            for key in ["showCurrentTime", "idleClockStyle", "featuredMetric", "showOverview", "metrics"] {
+                UserDefaults.standard.removeObject(forKey: "watchDashboard." + key)
+            }
+        }
+        if let showTime = environment["NINJAPACE_UI_TEST_SHOW_TIME"] {
+            UserDefaults.standard.set(showTime == "1", forKey: "watchDashboard.showCurrentTime")
+        }
+        if let style = environment["NINJAPACE_UI_TEST_CLOCK_STYLE"] {
+            UserDefaults.standard.set(style, forKey: "watchDashboard.idleClockStyle")
+        }
+        manager.warriorLevel = Int(environment["NINJAPACE_UI_TEST_WARRIOR_LEVEL"] ?? "1")
+            .flatMap(WarriorProgressionLevel.init(rawValue:))
+        manager.themeKey = environment["NINJAPACE_UI_TEST_THEME"] ?? "ninja"
+        manager.goalMiles = Double(environment["NINJAPACE_UI_TEST_GOAL"] ?? "5") ?? 5
 
         switch rawState {
         case "live":
@@ -316,6 +352,9 @@ struct ContentView: View {
             manager.steps = 6_240
             manager.hr = 142
             manager.activeCalories = 418
+            manager.totalCalories = 510
+            manager.averageHeartRate = 138
+            manager.peakHeartRate = 156
             manager.elapsedSeconds = 28 * 60 + 10
             manager.elapsedMilliseconds = manager.elapsedSeconds * 1_000
             manager.running = true
@@ -326,6 +365,9 @@ struct ContentView: View {
             manager.steps = 6_240
             manager.hr = 142
             manager.activeCalories = 418
+            manager.totalCalories = 510
+            manager.averageHeartRate = 138
+            manager.peakHeartRate = 156
             manager.elapsedSeconds = 28 * 60 + 10
             manager.elapsedMilliseconds = manager.elapsedSeconds * 1_000
             manager.running = true

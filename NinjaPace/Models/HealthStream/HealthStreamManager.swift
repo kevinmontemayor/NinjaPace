@@ -348,11 +348,16 @@ final class HealthStreamManager: NSObject, ObservableObject {
         guard let session = wcSession else {
             return
         }
-        let payload: [String: Any] = [
+        var payload: [String: Any] = [
             "theme": themeKey.lowercased(),
             "goalMiles": goalMiles,
             "settingsUpdatedAt": Date().timeIntervalSince1970,
         ]
+        // Read the same saved goal history that drives the iPhone warrior.
+        // On a fetch failure, omit the level so Watch retains its last confirmed rank.
+        if let level = try? workoutHistoryStore?.currentWarriorLevel() {
+            payload["warriorLevel"] = level.rawValue
+        }
         /*
          Settings are latest-state data.
          Application context keeps only the newest
@@ -420,6 +425,7 @@ final class HealthStreamManager: NSObject, ObservableObject {
             _ = try workoutHistoryStore.saveWorkout(record)
             hasPersistedCurrentWorkout = true
             lastPersistedWatchID = id
+            syncCurrentSettingsToWatch()
         } catch {
             userAlert = .workoutSaveFailed
         }
@@ -673,6 +679,7 @@ extension HealthStreamManager: WCSessionDelegate {
             self.watchReachable = session.isReachable
             if error != nil { self.userAlert = .watchConnectionFailed }
             if activationState == .activated {
+                self.syncCurrentSettingsToWatch()
                 self.requestCurrentWatchState()
             }
         }
@@ -681,7 +688,10 @@ extension HealthStreamManager: WCSessionDelegate {
     nonisolated func sessionReachabilityDidChange(_ session: WCSession) {
         Task { @MainActor in
             self.watchReachable = session.isReachable
-            if session.isReachable { self.requestCurrentWatchState() }
+            if session.isReachable {
+                self.syncCurrentSettingsToWatch()
+                self.requestCurrentWatchState()
+            }
         }
     }
     

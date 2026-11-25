@@ -45,13 +45,13 @@ enum MacRelayAlert: Identifiable, Equatable {
         switch self {
 
         case .relayStartFailed:
-            return "NinjaPaceMac couldn’t start its local relay. Close any other NinjaPaceMac instances and try again."
+            return "NinjaPace couldn’t start its local relay. Close any other NinjaPace instances and try again."
 
         case .relayStoppedUnexpectedly:
             return "The NinjaPace relay stopped unexpectedly. Restart it from Relay Controls."
 
         case .overlayUnavailable:
-            return "NinjaPaceMac couldn’t load the streaming HUD. Please restart the app. If the problem continues, reinstall NinjaPaceMac."
+            return "NinjaPace couldn’t load the streaming HUD. Please restart the app. If the problem continues, reinstall NinjaPace."
         }
     }
 }

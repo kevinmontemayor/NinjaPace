@@ -467,7 +467,7 @@ struct ContentView: View {
                     .accessibilityIdentifier("stopRelayButton")
                 }
 
-                Text("The relay starts automatically when NinjaPaceMac launches.")
+                Text("The relay starts automatically when NinjaPace launches.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }

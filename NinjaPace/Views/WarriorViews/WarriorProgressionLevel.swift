@@ -211,3 +211,45 @@ extension WarriorProgressionLevel {
         }
     }
 }
+
+// Shared presentation metadata; earned-level calculation remains owned by iPhone history.
+extension WarriorProgressionLevel {
+    func assetName(forThemeKey themeKey: String) -> String {
+        "\(themeKey)_lvl\(rawValue)"
+    }
+
+    func title(forThemeKey themeKey: String) -> String? {
+        switch (themeKey, self) {
+        case ("ninja", .level1): return "Shinobi"
+        case ("ninja", .level2): return "Shinobi no Sensei"
+        case ("ninja", .level3): return "Shinobi no Mono"
+        case ("ninja", .level4): return "Tatsujin"
+
+        case ("viking", .level1): return "Drengr"
+        case ("viking", .level2): return "Raider"
+        case ("viking", .level3): return "Hersir"
+        case ("viking", .level4): return "Jarl"
+
+        case ("knight", .level1): return "Squire"
+        case ("knight", .level2): return "Knight"
+        case ("knight", .level3): return "Champion"
+        case ("knight", .level4): return "Paladin"
+
+        case ("pirate", .level1): return "Deckhand"
+        case ("pirate", .level2): return "Corsair"
+        case ("pirate", .level3): return "Captain"
+        case ("pirate", .level4): return "Pirate Lord"
+
+        case ("cyborg", .level1): return "Prototype"
+        case ("cyborg", .level2): return "Augmented"
+        case ("cyborg", .level3): return "Vanguard"
+        case ("cyborg", .level4): return "Apex"
+
+        case ("spartan", .level1): return "Agōgē"
+        case ("spartan", .level2): return "Hoplite"
+        case ("spartan", .level3): return "Lochagos"
+        case ("spartan", .level4): return "Strategos"
+        default: return nil
+        }
+    }
+}

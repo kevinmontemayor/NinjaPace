@@ -63,6 +63,27 @@ struct HistoricalGoalProgressTests {
         #expect(WarriorProgressionLevel.level(for: workouts.filter(\.wasGoalCompleted).count) < expectedLevel)
     }
 
+    @Test("Watch progression is derived from persisted history, including corrected goals",
+          arguments: [10, 25, 50])
+    func syncedProgression(threshold: Int) throws {
+        let container = try ModelContainer(for: WorkoutRecord.self,
+            configurations: ModelConfiguration(isStoredInMemoryOnly: true))
+        let context = ModelContext(container)
+        let history = WorkoutHistoryStore(modelContext: context,
+                                          achievementUnlockManager: AchievementUnlockManager())
+        let corrected = record()
+        for _ in 0..<(threshold - 1) { context.insert(record(goal: 3)) }
+        context.insert(corrected)
+        try context.save()
+        #expect(try history.currentWarriorLevel() == WarriorProgressionLevel.level(for: threshold - 1))
+        #expect(corrected.updateGoalMiles(3))
+        try context.save()
+        #expect(try history.currentWarriorLevel() == WarriorProgressionLevel.level(for: threshold))
+        #expect(corrected.updateGoalMiles(5))
+        try context.save()
+        #expect(try history.currentWarriorLevel() == WarriorProgressionLevel.level(for: threshold - 1))
+    }
+
     @Test("Invalid edits leave every goal-derived field unchanged", arguments: [0.0, -1, .infinity, -.infinity, .nan])
     func invalidEdits(value: Double) {
         let workout = record(goal: 3)

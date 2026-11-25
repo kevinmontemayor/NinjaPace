@@ -247,33 +247,31 @@ Important behavior:
 
 ## 9. Watch UI
 
-The Watch UI is intentionally compact and glanceable.
+Watch v2 uses native vertical pages. Swipe vertically or turn the Digital Crown to browse.
 
-Primary states:
+Default pages:
 
-| State | Meaning |
-|---|---|
-| `READY` | No active workout |
-| `LIVE` | Workout is running |
-| `PAUSED` | Workout is paused |
+1. **Warrior Home** — current time, full-color warrior artwork, state, goal or featured metric, and Start / Pause / Resume.
+2. **Overview** — elapsed, pace, heart rate, active calories, steps, and goal progress together.
+3. **Distance**
+4. **Pace**
+5. **Heart Rate** — current, average, and peak.
+6. **Elapsed** — active workout time.
+7. **Controls** — Start / Pause / Resume and confirmed Stop.
 
-Core controls:
+Open the sliders button on Home for **Dashboard** settings. Choose a warrior, enable the idle clock and choose Digital or Analog, hide Overview, choose the featured metric, and enable any of the six focus metrics (including Calories and Steps). These preferences are local to the Watch and persist across launches. Home and Controls always remain available. A rest day displays a rest-day label instead of a meaningless percentage.
 
-- Start / Pause / Resume
-- Stop
+Warrior selection uses the manager's existing persisted theme. Incoming iPhone theme settings still apply; local dashboard preferences are not sent to iPhone. The six initiate illustrations are copied unchanged from the iPhone warrior asset catalog into the Watch catalog, with the same asset names.
 
-Core metrics:
+Pause and Stop retain their confirmations. Resume is immediate. The manager remains the only workout authority; page navigation never starts, pauses, or stops a session. The root retains goal-crossing haptics and sounds, and Home/progress show a completed-goal treatment. Artwork remains static; the small weapon accent animates only on the visible page while live, with Reduce Motion, inactive scenes, and reduced luminance disabling it.
 
-- Elapsed time
-- Pace
-- Heart rate
-- Calories
-- Steps
-- Goal progress
+When **Show Current Time** is enabled, an idle Home displays a dedicated warrior clock. Tap anywhere to return to the dashboard. It returns after 60 seconds without interaction from any dashboard page, Dashboard settings, or a nested picker. Touches and scrolling restart the countdown. On timeout, settings close and the clock opens above Home; tapping the clock returns to Home. Starting a workout or making the app inactive cancels the countdown. Scroll upward past Home (a downward finger swipe or the Digital Crown) to reopen it immediately. It also re-arms after workout completion, relaunch, enabling the setting, or changing clock style. Live/paused workouts and a disabled Show Current Time setting always suppress it. The normal Home header always shows the warrior slogan.
 
-The interface is optimized for quick wrist-level confirmation rather than deep configuration.
+The clock uses a minute-aligned SwiftUI timeline; analog has hour/minute hands without a seconds timer. It does not keep the Watch awake. Digital formatting follows the user's locale. `watchDashboard.idleClockStyle` persists the style alongside existing preferences.
 
-[![Watch READY](../docs/images/previews/watch-ready.png)](../docs/images/watch/watch-ready.png) [![Watch LIVE with updated metric labels](../docs/images/previews/watch-live.png)](../docs/images/watch/watch-live.png) [![Watch PAUSED with updated metric labels](../docs/images/previews/watch-paused.png)](../docs/images/watch/watch-paused.png)
+The iPhone computes earned rank from saved completed goals using `WarriorProgressionLevel`. Its existing settings context/message now includes the canonical integer `warriorLevel` (1–4). Watch persists the last confirmed rank and shares the iPhone's asset/title metadata. All 24 warrior images are bundled locally. Goal corrections/imports trigger a settings refresh; the Watch does not recalculate progression. Before the first successful iPhone sync, it shows base artwork without claiming an earned title. Install the updated iPhone and Watch apps together to enable rank synchronization.
+
+The former `homeClock` identifier belongs to the idle clock container; `idleClockDigital` and `idleClockAnalog` identify its styles.
 
 ---
 
@@ -325,21 +323,22 @@ live
 paused
 ```
 
-Current UI coverage includes:
+UI coverage includes Home states, Overview metrics, vertical focus-page navigation, persisted page settings, warrior selection, rest days, Pause/Resume, and Stop confirmations. Screenshot attachments cover Ready, Live, Paused, Overview, and Distance on the selected simulator.
 
-- Ready dashboard
-- Live telemetry
-- Paused state
-- Pause confirmation cancellation
-- Pause → Resume flow
-- Stop confirmation cancellation
-- Stop → Ready flow
+Presentation unit tests cover default/custom page lists, unknown or duplicate preference values, formatting, and the presence of all 24 progression artwork assets in the Watch bundle. Existing workout-manager tests remain in place.
 
-Important watchOS test behavior:
+DEBUG-only launch options extend the existing state harness:
 
-- SwiftUI confirmation alerts are tested through their visible action buttons
-- Metric accessibility identifiers remain on leaf elements
-- Parent accessibility identifiers are avoided when they would hide child identifiers
+- `NINJAPACE_UI_TEST_THEME`: a warrior raw key.
+- `NINJAPACE_UI_TEST_WARRIOR_LEVEL`: canonical earned level integer (1–4; defaults to 1 in fixtures).
+- `NINJAPACE_UI_TEST_SHOW_TIME`: `1` enables the idle screen; `0` disables it.
+- `NINJAPACE_UI_TEST_CLOCK_STYLE`: `digital` or `analog`.
+- `NINJAPACE_UI_TEST_IDLE_TIMEOUT`: positive timeout in seconds for accelerated interaction tests; production always uses 60 seconds.
+- `NINJAPACE_UI_TEST_GOAL`: goal mileage (including zero for rest days).
+- `NINJAPACE_UI_TEST_PAGE`: an enabled dashboard page raw key.
+- `NINJAPACE_UI_TEST_RESET_DASHBOARD=0`: retain preferences for relaunch tests; otherwise test launches reset all five dashboard preference keys.
+
+These options do not activate HealthKit or WatchConnectivity. Simulator UI fixtures test presentation and action routing; a paired-device workout is still needed to validate hardware Crown interaction, wrist-down behavior, HealthKit collection, and end-to-end telemetry delivery.
 
 ---
 

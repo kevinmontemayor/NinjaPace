@@ -1,3 +1,10 @@
+//
+//  WorkoutConfirmationPage.swift
+//  NinjaPaceWatchUITests
+//
+//  Created by Kevin Montemayor on 11/23/26.
+//
+
 import XCTest
 
 @MainActor

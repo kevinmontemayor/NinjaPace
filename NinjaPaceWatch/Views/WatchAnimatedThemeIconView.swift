@@ -13,6 +13,9 @@ enum WatchThemeIconAnimation {
 }
 
 struct WatchAnimatedThemeIconView: View {
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.isLuminanceReduced) private var isLuminanceReduced
+    @Environment(\.scenePhase) private var scenePhase
 
     let theme: WatchTheme
     let tint: Color
@@ -21,7 +24,7 @@ struct WatchAnimatedThemeIconView: View {
 
     var body: some View {
         Group {
-            if isActive {
+            if isActive && !reduceMotion && !isLuminanceReduced && scenePhase == .active {
                 ActiveWatchThemeIconView(
                     theme: theme,
                     tint: tint,

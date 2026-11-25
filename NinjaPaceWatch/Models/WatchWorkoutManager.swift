@@ -15,6 +15,7 @@ import WatchKit
 final class WatchWorkoutManager: NSObject, ObservableObject {
     @AppStorage("selectedTheme") private var storedThemeKey: String = "ninja"
     @AppStorage("goalMiles") private var storedGoalMiles: Double = 3.11
+    @AppStorage("warriorProgressionLevel") private var storedWarriorLevel: Int = 0
     @AppStorage("lastAppliedSettingsUpdatedAt") private var lastAppliedSettingsUpdatedAt: Double = 0
     @Published var miles: Double = 0
     @Published var steps: Int = 0
@@ -30,6 +31,10 @@ final class WatchWorkoutManager: NSObject, ObservableObject {
     @Published var peakSpeedMPH: Double = 0
     @Published var themeKey: String = "ninja" { didSet { storedThemeKey = themeKey } }
     @Published var goalMiles: Double = 3.11 { didSet { storedGoalMiles = goalMiles } }
+    // nil means this Watch has not received an earned level from iPhone yet.
+    @Published var warriorLevel: WarriorProgressionLevel? {
+        didSet { storedWarriorLevel = warriorLevel?.rawValue ?? 0 }
+    }
     @Published var userAlert: WatchWorkoutAlert?
     var progress: Double {
         guard goalMiles > 0 else { return 0 }
@@ -50,6 +55,11 @@ final class WatchWorkoutManager: NSObject, ObservableObject {
     private var isMirroringActive = false
     // Retain the identity and dates after session teardown for reconnect/snapshot replies.
     private var completedWorkout: (id: UUID, start: Date, end: Date, goalMiles: Double)?
+
+    override init() {
+        super.init()
+        warriorLevel = WarriorProgressionLevel(rawValue: storedWarriorLevel)
+    }
     
     var elapsedText: String {
         let hours = elapsedSeconds / 3_600
@@ -76,6 +86,7 @@ final class WatchWorkoutManager: NSObject, ObservableObject {
         // Fast local fallback while waiting for iPhone synchronization.
         themeKey = storedThemeKey
         goalMiles = storedGoalMiles
+        warriorLevel = WarriorProgressionLevel(rawValue: storedWarriorLevel)
         setupWC()
         requestAuth()
         // If WCSession was already activated before this manager appeared, apply the most recently received settings immediately.
@@ -279,13 +290,17 @@ final class WatchWorkoutManager: NSObject, ObservableObject {
         telemetryTask = nil
     }
     
-    private func applyPhoneSettings(_ settings: [String: Any]) {
+    func applyPhoneSettings(_ settings: [String: Any]) {
         // Protect against settings arriving out of order across WC transports.
         if let updatedAt = Self.doubleValue(from: settings["settingsUpdatedAt"]) {
             guard updatedAt >= lastAppliedSettingsUpdatedAt else { return }
             lastAppliedSettingsUpdatedAt = updatedAt
         }
         var didChange = false
+        if let rawLevel = settings["warriorLevel"] as? Int,
+           let level = WarriorProgressionLevel(rawValue: rawLevel) {
+            warriorLevel = level
+        }
         if let theme = settings["theme"] as? String {
             let normalizedTheme = theme.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
             if themeKey != normalizedTheme {
@@ -648,6 +663,10 @@ extension WatchWorkoutManager: WCSessionDelegate {
                 self.currentTelemetryPayload()
             )
         }
+    }
+
+    nonisolated func session(_ session: WCSession, didReceiveMessage message: [String: Any]) {
+        Task { @MainActor in self.handlePhonePayload(message) }
     }
     
     nonisolated func session(_ session: WCSession, didReceiveApplicationContext applicationContext: [String: Any]) {
