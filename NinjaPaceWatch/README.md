@@ -251,7 +251,7 @@ Watch v2 uses native vertical pages. Swipe vertically or turn the Digital Crown 
 
 Default pages:
 
-1. **Warrior Home** — current time, full-color warrior artwork, state, goal or featured metric, and Start / Pause / Resume.
+1. **Warrior Home** — full-color warrior artwork, synced rank, state, goal or featured metric, and Start / Pause / Resume.
 2. **Overview** — elapsed, pace, heart rate, active calories, steps, and goal progress together.
 3. **Distance**
 4. **Pace**
@@ -261,7 +261,7 @@ Default pages:
 
 Open the sliders button on Home for **Dashboard** settings. Choose a warrior, enable the idle clock and choose Digital or Analog, hide Overview, choose the featured metric, and enable any of the six focus metrics (including Calories and Steps). These preferences are local to the Watch and persist across launches. Home and Controls always remain available. A rest day displays a rest-day label instead of a meaningless percentage.
 
-Warrior selection uses the manager's existing persisted theme. Incoming iPhone theme settings still apply; local dashboard preferences are not sent to iPhone. The six initiate illustrations are copied unchanged from the iPhone warrior asset catalog into the Watch catalog, with the same asset names.
+Warrior selection uses the manager's existing persisted theme. Incoming iPhone theme settings still apply; local dashboard preferences are not sent to iPhone. All 24 progression illustrations are bundled in the Watch catalog with the same asset names as the iPhone.
 
 Pause and Stop retain their confirmations. Resume is immediate. The manager remains the only workout authority; page navigation never starts, pauses, or stops a session. The root retains goal-crossing haptics and sounds, and Home/progress show a completed-goal treatment. Artwork remains static; the small weapon accent animates only on the visible page while live, with Reduce Motion, inactive scenes, and reduced luminance disabling it.
 
@@ -272,6 +272,32 @@ The clock uses a minute-aligned SwiftUI timeline; analog has hour/minute hands w
 The iPhone computes earned rank from saved completed goals using `WarriorProgressionLevel`. Its existing settings context/message now includes the canonical integer `warriorLevel` (1–4). Watch persists the last confirmed rank and shares the iPhone's asset/title metadata. All 24 warrior images are bundled locally. Goal corrections/imports trigger a settings refresh; the Watch does not recalculate progression. Before the first successful iPhone sync, it shows base artwork without claiming an earned title. Install the updated iPhone and Watch apps together to enable rank synchronization.
 
 The former `homeClock` identifier belongs to the idle clock container; `idleClockDigital` and `idleClockAnalog` identify its styles.
+
+### Watch v2 gallery
+
+Select a screenshot to open the original. These are Apple Watch Ultra 4 (49 mm), watchOS 27.2 simulator captures with sample telemetry and level-4 warrior fixtures.
+
+**Ninja · Viking · Knight**
+
+[![Ninja live Warrior Home](../docs/images/previews/watch-v2-home-ninja.png)](../docs/images/watch/watch-v2-home-ninja.png) [![Viking live Warrior Home](../docs/images/previews/watch-v2-home-viking.png)](../docs/images/watch/watch-v2-home-viking.png) [![Knight live Warrior Home](../docs/images/previews/watch-v2-home-knight.png)](../docs/images/watch/watch-v2-home-knight.png)
+
+**Pirate · Cyborg · Spartan**
+
+[![Pirate live Warrior Home](../docs/images/previews/watch-v2-home-pirate.png)](../docs/images/watch/watch-v2-home-pirate.png) [![Cyborg live Warrior Home](../docs/images/previews/watch-v2-home-cyborg.png)](../docs/images/watch/watch-v2-home-cyborg.png) [![Spartan live Warrior Home](../docs/images/previews/watch-v2-home-spartan.png)](../docs/images/watch/watch-v2-home-spartan.png)
+
+**Ready to train · Paused workout**
+
+[![Ready Warrior Home with a five-mile goal and Start button](../docs/images/previews/watch-v2-home-ready.png)](../docs/images/watch/watch-v2-home-ready.png) [![Paused Warrior Home with elapsed time and Resume button](../docs/images/previews/watch-v2-home-paused.png)](../docs/images/watch/watch-v2-home-paused.png)
+
+**Workout overview · Distance · Heart rate**
+
+[![Workout Overview with live sample metrics](../docs/images/previews/watch-v2-overview.png)](../docs/images/watch/watch-v2-overview.png) [![Distance focus showing 3.14 miles](../docs/images/previews/watch-v2-distance.png)](../docs/images/watch/watch-v2-distance.png) [![Heart Rate focus with current, average, and peak readings](../docs/images/previews/watch-v2-heart-rate.png)](../docs/images/watch/watch-v2-heart-rate.png)
+
+**Workout controls · Dashboard settings · Warrior selection**
+
+[![Workout Controls with Pause and Stop actions](../docs/images/previews/watch-v2-controls.png)](../docs/images/watch/watch-v2-controls.png) [![Cyborg-themed Dashboard settings and toggles](../docs/images/previews/watch-v2-settings.png)](../docs/images/watch/watch-v2-settings.png) [![Choose Warrior list in the Cyborg theme](../docs/images/previews/watch-v2-warrior-picker.png)](../docs/images/watch/watch-v2-warrior-picker.png)
+
+The gallery uses the shared 3.14-mile workout fixture. Ready uses zero metrics and a 5.00-mile goal; Paused preserves the workout values. Artwork ranks are explicit capture fixtures, not a record of earned achievements. [Capture instructions and provenance](../docs/SCREENSHOTS.md#november-25-watch-v2-gallery).
 
 ---
 

@@ -24,7 +24,8 @@ Goal Complete changes distance to 5.00 mi and progress to 100%. Idle retains the
 | Set | Completed files | Notes |
 |---|---|---|
 | iPhone | `welcome-warrior-selection.png`, `today-live.png`, `today-goal.png`, `training-schedule.png`, `history.png`, `workout-detail.png`, `awards.png`, `hud-customization.png`, `relay-setup-locked.png` | [iPhone images](images/iphone); iPhone 18 Pro Max, iOS 27 simulator. History, schedule, and awards use opt-in demo data. |
-| Watch | `watch-ready.png`, `watch-live.png`, `watch-paused.png` | [Watch images](images/watch); Ultra 3 49 mm, watchOS 26 simulator. Rebuilt and recaptured after the metric-label update to `ET.⏱️`, `Pace 👟`, `HR ❤️`, `Cal.🔥`, and `Steps 👣`. |
+| Watch (original UI) | `watch-ready.png`, `watch-live.png`, `watch-paused.png` | [Watch images](images/watch); Ultra 3 49 mm, watchOS 26 simulator. Retained for the original ecosystem composite. |
+| Watch v2 | `watch-v2-home-*.png`, `watch-v2-overview.png`, `watch-v2-distance.png`, `watch-v2-heart-rate.png`, `watch-v2-controls.png`, `watch-v2-settings.png`, `watch-v2-warrior-picker.png` | 14 [Watch images](images/watch); Ultra 4 49 mm, watchOS 27.2. Six warrior themes, Ready/Live/Paused, metrics, and themed settings. See the reproduction instructions below. |
 | Mac | `mac-relay-offline.png`, `mac-relay-live.png`, `mac-hud-studio-follow-iphone.png`, `mac-hud-studio-local.png` | [Mac images](images/mac); Debug demo launch states, no real LAN address. |
 | HUD states | `hud-idle-ninja.png`, `hud-live-ninja.png`, `hud-paused-ninja.png`, `hud-goal-ninja.png` | [HUD images](images/hud); same Ninja preset and telemetry where state permits. |
 | HUD themes | `hud-live-ninja.png`, `hud-live-viking.png`, `hud-live-knight.png`, `hud-live-pirate.png`, `hud-live-cyborg.png`, `hud-live-spartan.png` | Preset values read from `AppTheme+HUDPreset.swift`. |
@@ -167,3 +168,33 @@ Added `images/iphone/monthly-challenges-screen.png`, exported from the new “Mo
 ### Grandmaster collection mastery
 
 `images/iphone/achievement-grandmaster.png` was exported directly from the dark-appearance `AchievementMasteryView` SwiftUI preview. It shows the Grandmaster badge, Collection Mastered, 24 / 24 Awards Unlocked, 100% COMPLETE, and Enter the Hall of Legends. The 200-pixel preview links to the original in both READMEs. This is a sample mastery state captured after the opening `.grandmaster` particle bursts, not a real earned collection or verification of audio playback. No app source or achievement data was changed.
+
+## November 25 Watch v2 gallery
+
+Captured from the current Debug app on **Apple Watch Ultra 4 (49 mm), watchOS 27.2**, using Xcode 27.2 and `WatchDocumentationScreenshots/testCaptureWatchV2Gallery`. The capture case passed. All 14 originals are unretouched 422 × 514 PNGs; their linked README previews are 200 pixels wide.
+
+| Files in `images/watch/` | Capture state |
+|---|---|
+| `watch-v2-home-ninja.png`, `watch-v2-home-viking.png`, `watch-v2-home-knight.png`, `watch-v2-home-pirate.png`, `watch-v2-home-cyborg.png`, `watch-v2-home-spartan.png` | LIVE Home for each warrior, with explicit level-4 fixtures and shared sample metrics. |
+| `watch-v2-home-ready.png` | Ninja Home after dismissing the idle clock; zero workout values and a 5.00-mile goal. |
+| `watch-v2-home-paused.png` | Ninja Home with PAUSED status, preserved elapsed time, and Resume. |
+| `watch-v2-overview.png`, `watch-v2-distance.png`, `watch-v2-heart-rate.png`, `watch-v2-controls.png` | Ninja LIVE workout pages. Heart Rate also shows the fixture's average of 138 and peak of 156 bpm. |
+| `watch-v2-settings.png`, `watch-v2-warrior-picker.png` | Cyborg-themed settings and the first viewport of the scrollable warrior list. |
+
+These images illustrate the running interface, not earned ranks, HealthKit recording, or phone synchronization. The settings list continues below the captured viewport. The older small-Watch idle-clock captures were not selected because their clock text is clipped by the current layout; no UI was altered or retouched for this documentation refresh. The original ecosystem composite remains a historical cross-device overview and predates Watch v2.
+
+To reproduce, select an installed Watch simulator with `xcrun simctl list devices available`, and use a new result-bundle path for each run:
+
+```sh
+xcodebuild test -project NinjaPace.xcodeproj \
+  -scheme NinjaPaceWatch \
+  -destination 'platform=watchOS Simulator,id=<WATCH_SIMULATOR_ID>' \
+  -only-testing:NinjaPaceWatchUITests/WatchDocumentationScreenshots/testCaptureWatchV2Gallery \
+  -parallel-testing-enabled NO \
+  -resultBundlePath /tmp/NinjaPaceWatchGallery.xcresult \
+  CODE_SIGNING_ALLOWED=NO
+
+python3 docs/tools/export_watch_screenshots.py /tmp/NinjaPaceWatchGallery.xcresult
+```
+
+Set `DEVELOPER_DIR` for both commands if using a non-default Xcode installation. The exporter requires the complete gallery, copies the named PNG attachments to `images/watch/`, and generates the matching `images/previews/` derivatives with macOS `sips`. `build_readme_previews.py` can also regenerate previews from the saved originals. The root README features six screenshots; the Watch guide includes the complete gallery. All gallery images and local links were checked.

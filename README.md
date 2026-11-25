@@ -24,7 +24,7 @@ Apple Watch → iPhone → Mac relay → OBS / Streaming HUD
 
 The Watch owns the active workout. The iPhone manages training and synchronization. Fitness features remain useful without the Mac or OBS.
 
-[![iPhone Today with deterministic LIVE telemetry](docs/images/previews/today-live.png)](docs/images/iphone/today-live.png) [![Watch LIVE with updated metric labels](docs/images/previews/watch-live.png)](docs/images/watch/watch-live.png) [![Mac relay ONLINE with demo workout telemetry](docs/images/previews/mac-relay-live.png)](docs/images/mac/mac-relay-live.png)
+[![iPhone Today with deterministic LIVE telemetry](docs/images/previews/today-live.png)](docs/images/iphone/today-live.png) [![Watch v2 Warrior Home with Ninja artwork and live workout progress](docs/images/previews/watch-v2-home-ninja.png)](docs/images/watch/watch-v2-home-ninja.png) [![Mac relay ONLINE with demo workout telemetry](docs/images/previews/mac-relay-live.png)](docs/images/mac/mac-relay-live.png)
 
 ## Choose Your Warrior
 
@@ -33,6 +33,24 @@ The Watch owns the active workout. The iPhone manages training and synchronizati
 Warrior themes shape the app artwork, tint, iconography, and HUD presets. Each identity carries through the training and streaming experience.
 
 [![Ninja, Viking, Knight, Pirate, Cyborg, and Spartan HUD presets](docs/images/previews/hud-six-themes.png)](docs/images/hud/hud-six-themes.png)
+
+## Watch v2: Your Warrior on Your Wrist
+
+Warrior Home puts your character, synced rank, and workout progress at the center of the Watch experience. Each of the six warriors brings its own colors and artwork to the dashboard, metric pages, and settings.
+
+**Ninja · Viking · Cyborg**
+
+[![Ninja Warrior Home during a live workout](docs/images/previews/watch-v2-home-ninja.png)](docs/images/watch/watch-v2-home-ninja.png) [![Viking Warrior Home during a live workout](docs/images/previews/watch-v2-home-viking.png)](docs/images/watch/watch-v2-home-viking.png) [![Cyborg Warrior Home during a live workout](docs/images/previews/watch-v2-home-cyborg.png)](docs/images/watch/watch-v2-home-cyborg.png)
+
+Swipe vertically or turn the Digital Crown to move from Home to the workout overview, focused metrics, and controls. Dashboard settings let you choose your warrior, featured metric, clock style, and visible pages.
+
+Between workouts, the Digital or Analog warrior clock returns after 60 seconds of inactivity when Show Current Time is enabled.
+
+**Workout overview · Distance focus · Themed settings**
+
+[![Watch workout overview with elapsed time, pace, heart rate, calories, and steps](docs/images/previews/watch-v2-overview.png)](docs/images/watch/watch-v2-overview.png) [![Watch Distance focus page showing 3.14 miles](docs/images/previews/watch-v2-distance.png)](docs/images/watch/watch-v2-distance.png) [![Cyborg-themed Watch Dashboard settings](docs/images/previews/watch-v2-settings.png)](docs/images/watch/watch-v2-settings.png)
+
+*Apple Watch Ultra simulator captures with sample workout data and level-4 warrior fixtures. See [all six themes, workout states, and settings](NinjaPaceWatch/README.md#watch-v2-gallery).*
 
 ## Train and Track Your Progress
 

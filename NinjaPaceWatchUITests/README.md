@@ -65,3 +65,14 @@ and both styles persisting through relaunch. It captures Ninja (early/legendary)
 Viking, Cyborg, and Pirate progression screenshots. Existing Ready dashboard tests
 dismiss the idle screen first; `homeClock` now identifies the idle clock container.
 The DEBUG Start action enters a deterministic running state without invoking HealthKit.
+
+## GitHub gallery captures
+
+`WatchDocumentationScreenshots/testCaptureWatchV2Gallery` saves 14 named PNG
+attachments: all six level-4 warrior Home screens, Ready and Paused, Overview,
+Distance, Heart Rate, Controls, Dashboard settings, and the warrior picker.
+Run it on the 49 mm Ultra simulator for the repository gallery. It uses the same
+synthetic telemetry fixtures and performs no real workout recording.
+
+Export the result with `docs/tools/export_watch_screenshots.py`; see the
+[capture manifest](../docs/SCREENSHOTS.md#november-25-watch-v2-gallery) for commands.
